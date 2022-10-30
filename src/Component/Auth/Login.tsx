@@ -45,7 +45,7 @@ const Login = () => {
         </div>
         <div className="p-3 ps-5">
           <div className="row p-5 fs-5">
-            <div className="col-4">
+            <div className="col-3">
               <img src={process.env.PUBLIC_URL + "/images/coins1.png"} alt="" />
               <p className="fw-bold">Tích điểm nhanh chóng</p>
               <span>Tích điểm với mỗi lượt đặt giao hàng thành công, quy đổi điểm để tiết kiệm nhiều hơn.</span>
@@ -56,15 +56,15 @@ const Login = () => {
               <span>Phương thức thanh toán tiện lợi an toàn. Tích hợp chức năng lưu thẻ để đặt phòng lần sau.</span>
             </div>
           </div>
-          <div className="row p-5">
-            <div className="col-4">
+          <div className="row p-5 fs-5">
+            <div className="col-3">
               <img src={process.env.PUBLIC_URL + "/images/backpack.png"} alt="" />
-              <p className="fw-bold">Ưu đãi mỗi ngày</p>
+              <p className="fw-bold fs-4">Ưu đãi mỗi ngày</p>
               <span>Nhận thông báo yyw đãi từ GoShip đễ săn những mã giảm giá hằng ngày nha.</span>
             </div>
             <div className="col-3">
               <img src={process.env.PUBLIC_URL + "/images/top-sales.png"} alt="" />
-              <p className="fw-bold">Tiện ích thông minh</p>
+              <p className="fw-bold fs-4">Tiện ích thông minh</p>
               <span>Check-in và kiểm tra đơn hàng nhanh chóng và tiện lợi</span>
             </div>
           </div>
