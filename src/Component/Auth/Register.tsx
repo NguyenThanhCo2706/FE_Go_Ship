@@ -1,22 +1,10 @@
 import './auth.css'
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
-
-
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate()
-  const navigateRegister = () => {
-    navigate('/register')
-  }
-  const [isActive, setIsActive] = useState(false);
-  const handleLogin = () => {
-    setIsActive(!isActive)
-    console.log(isActive)
-  }
-  const aaa = () => {
-    setIsActive(!isActive)
-
+  const navigateLogin = () => {
+    navigate('/login')
   }
   return (
     <>
@@ -54,7 +42,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-
       <div className="position-relative">
         <div className="d-flex flex-column p-5 fs-5 bg-primary text-light color-gradient">
           <span className="fw-bold fs-4 ps-5">GoShip giao hàng siêu tốc - Chúng tôi số 2 không ai số 1</span>
@@ -86,67 +73,43 @@ const Login = () => {
             </div>
           </div>
         </div>
-        <div className="position-absolute login-form-position layout-boder p-5 shadow-lg p-3 mb-5 bg-body maxWidth-form">
+        <div className="position-absolute login-form-position layout-boder shadow-lg p-5 mb-5 bg-body maxWidth-form">
           <div className="d-flex flex-column align-items-center fs-5">
-            <p className="fw-bold m-3 fs-4">Đăng nhập</p>
-            <p className="fw-bold mb-4">Đăng nhập GoShip để sử dụng ứng dụng</p>
-            <input className="form-control layout-boder m-3 fs-5" type="text" placeholder="Địa chỉ email hoặc số điện thoại" />
-            <input className="form-control layout-boder m-3 fs-5" type="text" placeholder="Mật khẩu" />
-            <button className="form-control layout-boder bg-primary text-white m-3 fs-5" onClick={handleLogin}>Đăng nhập</button>
-            <div className="m-3">
-              <span>Quên mặt khẩu? </span>
-              <span className="text-primary event-hover">Nhấn vào đây</span>
+            <p className="fw-bold m-3 fs-4">Đăng ký thành viên</p>
+            <div className="w-100 m-1">
+              <span className="fw-bold">Địa chỉ email</span>
+              <input className="form-control layout-boder fs-5" type="text" placeholder="example@gmail.com" />
             </div>
-            <div className="m-3 mb-5">
-              <span>Bạn chưa có tài khoản GoShip? </span>
-              <span className="text-primary event-hover" onClick={navigateRegister}>Đăng ký</span>
+            <div className="w-100 m-1">
+              <span className="fw-bold">Số điện thoại</span>
+              <input className="form-control layout-boder fs-5" type="text" placeholder="" />
+            </div>
+            <div className="w-100 m-1">
+              <span className="fw-bold">Họ và tên</span>
+              <input className="form-control layout-boder fs-5" type="text" placeholder="Nguyễn Văn A" />
+            </div>
+            <div className="w-100 m-1">
+              <span className="fw-bold">Mật khẩu</span>
+              <input className="form-control layout-boder fs-5" type="text" placeholder="********" />
+            </div>
+            <div className="w-100 m-1">
+              <span className="fw-bold">Xác nhận mật khẩu</span>
+              <input className="form-control layout-boder fs-5" type="text" placeholder="********" />
+            </div>
+            <button className="form-control layout-boder bg-primary text-white m-3 fs-5">Đăng ký</button>
+            <div className="m-3 text-center">
+              <span>Bạn đã có tài khoản GoShip? </span>
+              <p className="text-primary event-hover" onClick={navigateLogin}>Nhấn vào đây</p>
+            </div>
+            <div className="text-center">
+              <p>Tôi đồng ý với Bảo mật và Điều khoản
+                hoạt động của GoShip</p>
             </div>
           </div>
         </div>
       </div>
-      {
-        isActive ?
-          <>
-            <div className="modal active" onClick={handleLogin}>
-              <div
-                className="d-flex flex-column flex-wrap align-content-center flex-wrap align-items-center position-relative bg-white p-5 layout-boder"
-                onClick={e => e.stopPropagation()}
-              >
-                <h2>XÁC THỰC TÀI KHOẢN</h2>
-                <i className="fa-sharp fa-solid fa-comment-sms fs-1"></i>
-                <span className="fs-5">Nhập mã OTP</span>
-                <span className="fw-lighter">Chúng tôi đã gửi và SMS có mã kích hoạt đến điện thoại của bạn</span>
-                <span>00000</span>
-                <input type="text" className="form-control text-center" />
-                <span className="text-primary event-hover"> Gửi lại mã</span>
-                <button className="btn btn-primary">Xác nhận</button>
-              </div>
-            </div>
-          </>
-          :
-          <>
-            <div className="modal">
-              <div className="modal-container">
-                <div className="">
-                  <div className="d-flex flex-column flex-wrap align-content-center flex-wrap align-items-center">
-                    <h2>XÁC THỰC TÀI KHOẢN</h2>
-                    <i className="fa-sharp fa-solid fa-comment-sms fs-1"></i>
-                    <span className="fs-5">Nhập mã OTP</span>
-                    <span className="fw-lighter">Chúng tôi đã gửi và SMS có mã kích hoạt đến điện thoại của bạn</span>
-                    <span>00000</span>
-                    <input type="text" />
-                    <span className="text-primary event-hover"> Gửi lại mã</span>
-                    <button className="btn btn-primary">Xác nhận</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-      }
-
-
     </>
   );
 }
 
-export default Login;
+export default Register;
