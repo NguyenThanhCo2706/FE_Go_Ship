@@ -1,0 +1,55 @@
+.img-logo{
+  width:80px;
+}
+
+.color-gradient {
+  background: linear-gradient(to right, #3366ff 0%, #99ccff 60%, #3366ff 100%);
+}
+
+.login-form-position {
+  top: 12%;
+  right: 12%;
+}
+
+.layout-boder {
+  border-radius: 50px ;
+}
+
+.event-hover {
+  cursor: pointer;
+}
+
+.event-hover:hover {
+  color: red!important;
+}
+
+.modal {
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-container {
+  display: flex;
+  flex-direction: row;
+  width: 600px;
+  min-height: 600px;
+  background-color: #fff;
+  position: relative;
+  animation: growth ease 0.4s, fadeIn ease 0.4s;
+}
+
+.maxWidth-form{
+  max-width: 500px;
+}
