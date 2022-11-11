@@ -1,10 +1,63 @@
-import './auth.css'
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+
+import Auth from '../../interfaces/auth';
+import authApi from '../../api/authApi';
+import { yupAuth } from '../../validation/validation';
+import MessageBox from '../Commons/MessageBox';
+import constraint from '../../constraint';
+import './auth.css'
 
 const Register = () => {
   const navigate = useNavigate()
+  const [openBoxOTP, setOpenBoxOTP] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [messageError, setMessageError] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [rePassword, setRePassword] = useState("");
+  const [otp, setOTP] = useState("");
+
   const navigateLogin = () => {
-    navigate('/login')
+    navigate('/login');
+  }
+
+  const handleRegister = async () => {
+    try {
+      const auth: Auth = {
+        phone_number: phone,
+        password: password,
+        role: 1,
+        token_device: ""
+      }
+      await yupAuth.validate(auth);
+      await authApi.register(auth);
+      setOpenBoxOTP(!openBoxOTP);
+    }
+    catch (err) {
+      setIsError(true);
+      setMessageError(String(err));
+    }
+  }
+
+  const handleHideOTP = () => {
+    setOpenBoxOTP(!openBoxOTP)
+  }
+
+  const handleAcceptOTP = () => {
+    setOpenBoxOTP(false);
+    setRegisterSuccess(true);
+  }
+  const handleAcceptError = () => {
+    setIsError(false);
+  }
+
+  const handleRegisterSuccess = () => {
+    setRegisterSuccess(false);
+    navigate('/login');
   }
   return (
     <>
@@ -78,25 +131,49 @@ const Register = () => {
             <p className="fw-bold m-3 fs-4">Đăng ký thành viên</p>
             <div className="w-100 m-1">
               <span className="fw-bold">Địa chỉ email</span>
-              <input className="form-control layout-boder fs-5" type="text" placeholder="example@gmail.com" />
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                className="form-control layout-boder fs-5"
+                type="text"
+                placeholder="example@gmail.com"
+              />
             </div>
             <div className="w-100 m-1">
               <span className="fw-bold">Số điện thoại</span>
-              <input className="form-control layout-boder fs-5" type="text" placeholder="" />
+              <input
+                onChange={(e) => setPhone(e.target.value)}
+                className="form-control layout-boder fs-5"
+                type="text"
+                placeholder="0123456789" />
             </div>
             <div className="w-100 m-1">
               <span className="fw-bold">Họ và tên</span>
-              <input className="form-control layout-boder fs-5" type="text" placeholder="Nguyễn Văn A" />
+              <input
+                onChange={(e) => setName(e.target.value)}
+                className="form-control layout-boder fs-5"
+                type="text"
+                placeholder="Nguyễn Văn A" />
             </div>
             <div className="w-100 m-1">
               <span className="fw-bold">Mật khẩu</span>
-              <input className="form-control layout-boder fs-5" type="text" placeholder="********" />
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                className="form-control layout-boder fs-5"
+                type="password"
+                placeholder="********" />
             </div>
             <div className="w-100 m-1">
               <span className="fw-bold">Xác nhận mật khẩu</span>
-              <input className="form-control layout-boder fs-5" type="text" placeholder="********" />
+              <input
+                onChange={(e) => setRePassword(e.target.value)}
+                className="form-control layout-boder fs-5"
+                type="password"
+                placeholder="********" />
             </div>
-            <button className="form-control layout-boder bg-primary text-white m-3 fs-5">Đăng ký</button>
+            <button
+              onClick={handleRegister}
+              className="form-control layout-boder bg-primary text-white m-3 fs-5"
+            >Đăng ký</button>
             <div className="m-3 text-center">
               <span>Bạn đã có tài khoản GoShip? </span>
               <p className="text-primary event-hover" onClick={navigateLogin}>Nhấn vào đây</p>
@@ -108,6 +185,54 @@ const Register = () => {
           </div>
         </div>
       </div>
+      {
+        openBoxOTP ?
+          <>
+            <div className="modal active" onClick={handleHideOTP}>
+              <div
+                className="d-flex flex-column flex-wrap align-content-center flex-wrap align-items-center position-relative bg-white p-5 layout-boder"
+                onClick={e => e.stopPropagation()}
+              >
+                <h2>XÁC THỰC TÀI KHOẢN</h2>
+                <i className="fa-sharp fa-solid fa-comment-sms fs-1"></i>
+                <span className="fs-5">Nhập mã OTP</span>
+                <span className="fw-lighter">Chúng tôi đã gửi và SMS có mã kích hoạt đến điện thoại của bạn</span>
+                <span>{phone}</span>
+                <input
+                  onChange={(e) => setOTP(e.target.value)}
+                  type="text"
+                  className="form-control text-center" />
+                <span className="text-primary event-hover"> Gửi lại mã</span>
+                <button
+                  onClick={handleAcceptOTP}
+                  className="btn btn-primary"
+                >Xác nhận</button>
+              </div>
+            </div>
+          </>
+          : <></>
+      }
+
+      {
+        isError ?
+          <MessageBox
+            title={constraint.NOTIFICATION}
+            icon="fa-solid fa-circle-xmark text-danger"
+            message={messageError}
+            handleAcceptError={handleAcceptError} />
+          :
+          <></>
+      }
+      {
+        registerSuccess ?
+          <MessageBox
+            title={constraint.SUCCESS}
+            icon="fa-solid fa-circle-check text-success"
+            message="Bạn đã đăng ký tài khoản thành công!"
+            handleAcceptError={handleRegisterSuccess} />
+          :
+          <></>
+      }
     </>
   );
 }

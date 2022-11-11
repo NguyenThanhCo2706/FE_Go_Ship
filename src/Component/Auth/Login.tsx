@@ -1,22 +1,47 @@
-import './auth.css'
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
+import authApi from '../../api/authApi';
+import { setLocalStorage } from '../../utils';
+import { yupAuth } from '../../validation/validation';
+import MessageBox from '../Commons/MessageBox';
+import constraint from '../../constraint';
+
+import './auth.css'
 
 
 const Login = () => {
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [messageError, setMessageError] = useState("");
+  const [isError, setIsError] = useState(false);
   const navigate = useNavigate()
-  const navigateRegister = () => {
-    navigate('/register')
-  }
-  const [isActive, setIsActive] = useState(false);
-  const handleLogin = () => {
-    setIsActive(!isActive)
-    console.log(isActive)
-  }
-  const aaa = () => {
-    setIsActive(!isActive)
 
+  const navigateRegister = () => {
+    navigate("/register")
+  }
+
+  const handleLogin = async () => {
+    try {
+      await yupAuth.validate({
+        phone_number: phone,
+        password: password,
+      })
+      const response = await authApi.login(phone, password);
+      console.log(response.data)
+      if (response?.data?.access_token) {
+        setLocalStorage(response.data.access_token);
+      }
+      navigate("/home");
+    }
+    catch (err) {
+      setIsError(true);
+      setMessageError(String(err));
+      console.log((err));
+    }
+  }
+  const handleAcceptError = () => {
+    setIsError(false);
   }
   return (
     <>
@@ -90,8 +115,18 @@ const Login = () => {
           <div className="d-flex flex-column align-items-center fs-5">
             <p className="fw-bold m-3 fs-4">Đăng nhập</p>
             <p className="fw-bold mb-4">Đăng nhập GoShip để sử dụng ứng dụng</p>
-            <input className="form-control layout-boder m-3 fs-5" type="text" placeholder="Địa chỉ email hoặc số điện thoại" />
-            <input className="form-control layout-boder m-3 fs-5" type="text" placeholder="Mật khẩu" />
+            <input
+              onChange={(e) => setPhone(e.target.value)}
+              className="form-control layout-boder m-3 fs-5"
+              type="text"
+              placeholder="Địa chỉ email hoặc số điện thoại"
+            />
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-control layout-boder m-3 fs-5"
+              type="password"
+              placeholder="Mật khẩu"
+            />
             <button className="form-control layout-boder bg-primary text-white m-3 fs-5" onClick={handleLogin}>Đăng nhập</button>
             <div className="m-3">
               <span>Quên mặt khẩu? </span>
@@ -105,46 +140,16 @@ const Login = () => {
         </div>
       </div>
       {
-        isActive ?
-          <>
-            <div className="modal active" onClick={handleLogin}>
-              <div
-                className="d-flex flex-column flex-wrap align-content-center flex-wrap align-items-center position-relative bg-white p-5 layout-boder"
-                onClick={e => e.stopPropagation()}
-              >
-                <h2>XÁC THỰC TÀI KHOẢN</h2>
-                <i className="fa-sharp fa-solid fa-comment-sms fs-1"></i>
-                <span className="fs-5">Nhập mã OTP</span>
-                <span className="fw-lighter">Chúng tôi đã gửi và SMS có mã kích hoạt đến điện thoại của bạn</span>
-                <span>00000</span>
-                <input type="text" className="form-control text-center" />
-                <span className="text-primary event-hover"> Gửi lại mã</span>
-                <button className="btn btn-primary">Xác nhận</button>
-              </div>
-            </div>
-          </>
+        isError ?
+          <MessageBox
+            title={constraint.NOTIFICATION}
+            icon="fa-solid fa-circle-xmark text-danger"
+            message={messageError}
+            handleAcceptError={handleAcceptError}
+          />
           :
-          <>
-            <div className="modal">
-              <div className="modal-container">
-                <div className="">
-                  <div className="d-flex flex-column flex-wrap align-content-center flex-wrap align-items-center">
-                    <h2>XÁC THỰC TÀI KHOẢN</h2>
-                    <i className="fa-sharp fa-solid fa-comment-sms fs-1"></i>
-                    <span className="fs-5">Nhập mã OTP</span>
-                    <span className="fw-lighter">Chúng tôi đã gửi và SMS có mã kích hoạt đến điện thoại của bạn</span>
-                    <span>00000</span>
-                    <input type="text" />
-                    <span className="text-primary event-hover"> Gửi lại mã</span>
-                    <button className="btn btn-primary">Xác nhận</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
+          <></>
       }
-
-
     </>
   );
 }
