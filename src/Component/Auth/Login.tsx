@@ -61,21 +61,17 @@ const Login = () => {
           <div className="col-8"></div>
         </div>
         <div className="row align-items-center fs-5 p-2 fw-bold">
-          <div className="col-6 row">
-            <div className="col-3 d-flex flex-column align-items-center">
+          <div className="col-4 row">
+            <div className="d-flex flex-column align-items-center">
               <img src={process.env.PUBLIC_URL + "/images/go_ship.png"} alt="" className="img-logo" />
               <span className="text-primary fw-bold fs-3">Go Ship</span>
             </div>
-            <div className="col-9 d-flex flex-row justify-content-between align-items-center">
-              <div>TRANG CHỦ</div>
-              <div>DỊCH VỤ</div>
-              <div>TUYỂN DỤNG</div>
-              <div>VỀ CHÚNG TÔI</div>
-            </div>
           </div>
-          <div className="col-6 d-flex flex-row">
-            <button className="btn btn-primary w-25 ms-5 me-1 fw-bold">ĐĂNG NHẬP/ĐĂNG KÝ</button>
-            <input className="form-control fs-5 w-50" type="text" placeholder="Tìm kiếm" />
+          <div className="col-8 d-flex flex-row justify-content-evenly align-items-center">
+            <div>TRANG CHỦ</div>
+            <div>DỊCH VỤ</div>
+            <div>TUYỂN DỤNG</div>
+            <div>VỀ CHÚNG TÔI</div>
           </div>
         </div>
       </div>
