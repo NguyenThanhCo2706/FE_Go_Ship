@@ -11,7 +11,7 @@ export default function App() {
   const [lat, setLat] = useState(0);
   const [zoom, setZoom] = useState(14);
   const [listLocation, setListLocation] = useState<Array<any>>([])
-  const [listMarker, setListMarker] = useState<Array<any>>([])
+  const [listMarkerLocation, setListMarkerLocation] = useState<Array<any>>([])
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -24,6 +24,7 @@ export default function App() {
       console.log("1")
       setLat(position.coords.latitude)
       setLng(position.coords.longitude)
+
       let marker = new mapboxgl.Marker({
         element: generateImageMarker(),
         draggable: true
@@ -64,10 +65,15 @@ export default function App() {
       return;
     }
     const data: any = await googleMapApi.searchname(e.target.value);
+    console.log(data.features);
     setListLocation(data.features)
     data.features.map((item: any) => {
       // console.log(item)
     })
+  }
+  const handleClickSearchItem = (location: Array<any>) => {
+    map.current.setCenter(location);
+    map.current.setZoom(zoom);
   }
   const generateImageMarker = () => {
     const el = document.createElement('img');
@@ -78,12 +84,34 @@ export default function App() {
   return (
     <div>
       <div className="div-search">
-        <input className="form-control fs-5 input-search" type="text" onChange={(e) => searchMap(e)} />
-        <div className="ms-3 me-3">
+        {/* <div className="">
+          <input className="form-control fs-5 input-search" type="search" />
+
+        </div> */}
+        <div className="">
+          <div className="input-group">
+            <span className="input-group-append">
+              <button className="btn btn-outline-secondary bg-white border-start-0 border-bottom-0 border ms-n5" type="button">
+                <img className="logo-search" src={process.env.PUBLIC_URL + "/images/go_ship.png"} alt="" />
+              </button>
+            </span>
+            <input className="form-control" type="search" onChange={(e) => searchMap(e)} />
+            <span className="input-group-append">
+              <button className="btn btn-outline-secondary bg-white border-start-0 border-bottom-0 border ms-n5" type="button">
+                <i className="fa fa-search"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+        <div className="">
           {
             listLocation?.map((item: any, index: number) => {
               return (
-                <div key={index} className="bg-light border border-1 event-hover p-1">
+                <div
+                  key={index}
+                  className="bg-light border border-1 event-hover p-1 item-search"
+                  onClick={() => handleClickSearchItem(item.geometry.coordinates)}
+                >
                   {item.properties.label}
                 </div>
               )
@@ -95,7 +123,11 @@ export default function App() {
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
       <div ref={mapContainer} className="map-container" onClick={(e) => aaa(e)} />
-      <div className="map-navigate"></div>
+      <div className="d-flex justify-content-evenly p-3 fs-1 map-navigate">
+        <i className="fa-solid fa-house"></i>
+        <i className="fa-solid fa-plus"></i>
+        <i className="fa-solid fa-list"></i>
+      </div>
     </div>
   );
 }

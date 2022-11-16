@@ -6,6 +6,8 @@ import authApi from '../../api/authApi';
 import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
 import constraint from '../../constraint';
+import { auth, firebase } from "../../config/firebase-config"
+
 import './auth.css'
 
 const Register = () => {
@@ -14,43 +16,75 @@ const Register = () => {
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [isError, setIsError] = useState(false);
-  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [otp, setOTP] = useState("");
+  const [final, setfinal] = useState<any>();
 
   const navigateLogin = () => {
     navigate('/login');
   }
 
   const handleRegister = async () => {
+    if (password != rePassword) {
+      setMessageError("Mật khẩu nhập không khớp");
+      setIsError(true);
+      return;
+    }
+    let verify = new firebase.auth.RecaptchaVerifier('recaptcha-container');
     try {
-      const auth: Auth = {
+      const user: Auth = {
         phone_number: phone,
         password: password,
         role: 1,
         token_device: ""
       }
-      await yupAuth.validate(auth);
-      await authApi.register(auth);
+      await yupAuth.validate(user);
+      const result = await auth.signInWithPhoneNumber(phone, verify);
+      setfinal(result);
       setOpenBoxOTP(!openBoxOTP);
+      console.log(result)
     }
-    catch (err) {
+    catch (err: any) {
+      console.log(err)
+      if (err?.message) {
+        setMessageError(err?.message);
+      }
+      else {
+        setMessageError("")
+      }
       setIsError(true);
-      setMessageError(String(err));
     }
+    verify.clear();
   }
 
   const handleHideOTP = () => {
     setOpenBoxOTP(!openBoxOTP)
   }
 
-  const handleAcceptOTP = () => {
-    setOpenBoxOTP(false);
-    setRegisterSuccess(true);
+  const handleAcceptOTP = async () => {
+    final.confirm(otp).then(async () => {
+      try {
+        const auth: Auth = {
+          phone_number: "0123451234",
+          password: password,
+          role: 1,
+          token_device: ""
+        }
+        await authApi.register(auth);
+        setOpenBoxOTP(false);
+        setRegisterSuccess(true);
+      }
+      catch (err) {
+        setIsError(true);
+        setMessageError(String(err));
+      }
+    }).catch((err: any) => {
+      alert("Wrong code");
+    })
   }
+
   const handleAcceptError = () => {
     setIsError(false);
   }
@@ -129,31 +163,17 @@ const Register = () => {
         <div className="position-absolute login-form-position layout-boder shadow-lg p-5 mb-5 bg-body maxWidth-form">
           <div className="d-flex flex-column align-items-center fs-5">
             <p className="fw-bold m-3 fs-4">Đăng ký thành viên</p>
-            <div className="w-100 m-1">
-              <span className="fw-bold">Địa chỉ email</span>
-              <input
-                onChange={(e) => setEmail(e.target.value)}
-                className="form-control layout-boder fs-5"
-                type="text"
-                placeholder="example@gmail.com"
-              />
-            </div>
+
             <div className="w-100 m-1">
               <span className="fw-bold">Số điện thoại</span>
               <input
+                value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="form-control layout-boder fs-5"
                 type="text"
                 placeholder="0123456789" />
             </div>
-            <div className="w-100 m-1">
-              <span className="fw-bold">Họ và tên</span>
-              <input
-                onChange={(e) => setName(e.target.value)}
-                className="form-control layout-boder fs-5"
-                type="text"
-                placeholder="Nguyễn Văn A" />
-            </div>
+
             <div className="w-100 m-1">
               <span className="fw-bold">Mật khẩu</span>
               <input
@@ -174,6 +194,7 @@ const Register = () => {
               onClick={handleRegister}
               className="form-control layout-boder bg-primary text-white m-3 fs-5"
             >Đăng ký</button>
+            <div id="recaptcha-container"></div>
             <div className="m-3 text-center">
               <span>Bạn đã có tài khoản GoShip? </span>
               <p className="text-primary event-hover" onClick={navigateLogin}>Nhấn vào đây</p>
@@ -199,6 +220,7 @@ const Register = () => {
                 <span className="fw-lighter">Chúng tôi đã gửi và SMS có mã kích hoạt đến điện thoại của bạn</span>
                 <span>{phone}</span>
                 <input
+                  value={otp}
                   onChange={(e) => setOTP(e.target.value)}
                   type="text"
                   className="form-control text-center" />
