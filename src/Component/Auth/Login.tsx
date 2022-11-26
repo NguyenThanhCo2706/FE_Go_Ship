@@ -7,14 +7,14 @@ import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
 import constraint from '../../constraint';
 
-import './auth.css'
 
 
-const Login = () => {
+const Login = (props: any) => {
+  const { phone, setPhone } = props;
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
   const [messageError, setMessageError] = useState("");
   const [isError, setIsError] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const navigate = useNavigate()
 
   const navigateRegister = () => {
@@ -27,6 +27,7 @@ const Login = () => {
         phone_number: phone,
         password: password,
       })
+      setWaiting(true);
       const response = await authApi.login(phone, password);
       console.log(response.data)
       if (response?.data?.access_token) {
@@ -34,13 +35,15 @@ const Login = () => {
       }
       navigate("/home");
     }
-    catch (err) {
+    catch (err: any) {
+      setWaiting(false);
       setIsError(true);
-      setMessageError(String(err));
+      err?.message ? setMessageError(String("Tài khoản hoặc mật khẩu không chính xác!")) : setMessageError(String(err));
       console.log((err));
     }
   }
-  const handleAcceptError = () => {
+  const handleHideNotification = () => {
+    setWaiting(false);
     setIsError(false);
   }
   return (
@@ -61,17 +64,21 @@ const Login = () => {
           <div className="col-8"></div>
         </div>
         <div className="row align-items-center fs-5 p-2 fw-bold">
-          <div className="col-4 row">
-            <div className="d-flex flex-column align-items-center">
+          <div className="col-6 row">
+            <div className="col-3 d-flex flex-column align-items-center">
               <img src={process.env.PUBLIC_URL + "/images/go_ship.png"} alt="" className="img-logo" />
               <span className="text-primary fw-bold fs-3">Go Ship</span>
             </div>
+            <div className="col-9 d-flex flex-row justify-content-between align-items-center">
+              <div>TRANG CHỦ</div>
+              <div>DỊCH VỤ</div>
+              <div>TUYỂN DỤNG</div>
+              <div>VỀ CHÚNG TÔI</div>
+            </div>
           </div>
-          <div className="col-8 d-flex flex-row justify-content-evenly align-items-center">
-            <div>TRANG CHỦ</div>
-            <div>DỊCH VỤ</div>
-            <div>TUYỂN DỤNG</div>
-            <div>VỀ CHÚNG TÔI</div>
+          <div className="col-6 d-flex flex-row">
+            <button className="btn btn-primary w-25 ms-5 me-1 fw-bold">ĐĂNG NHẬP/ĐĂNG KÝ</button>
+            <input className="form-control fs-5 w-50" type="text" placeholder="Tìm kiếm" />
           </div>
         </div>
       </div>
@@ -112,12 +119,14 @@ const Login = () => {
             <p className="fw-bold m-3 fs-4">Đăng nhập</p>
             <p className="fw-bold mb-4">Đăng nhập GoShip để sử dụng ứng dụng</p>
             <input
+              value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="form-control layout-boder m-3 fs-5"
               type="text"
               placeholder="Địa chỉ email hoặc số điện thoại"
             />
             <input
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="form-control layout-boder m-3 fs-5"
               type="password"
@@ -141,7 +150,18 @@ const Login = () => {
             title={constraint.NOTIFICATION}
             icon="fa-solid fa-circle-xmark text-danger"
             message={messageError}
-            handleAcceptError={handleAcceptError}
+            handleAcceptError={handleHideNotification}
+          />
+          :
+          <></>
+      }
+      {
+        waiting ?
+          <MessageBox
+            title={constraint.NOTIFICATION}
+            icon="fa-solid fa-arrows-rotate text-danger"
+            message={"Đang Xử Lý! Vui lòng chờ"}
+            handleAcceptError={handleHideNotification}
           />
           :
           <></>

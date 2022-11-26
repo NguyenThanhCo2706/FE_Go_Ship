@@ -1,4 +1,5 @@
 import axios from "axios"
+import Coordinates from "../interfaces/coordinates";
 
 const API_KEY = "5b3ce3597851110001cf62484f65c4b2035549f28529cc860cb74c3c"
 
@@ -12,6 +13,17 @@ const googleMapApi = {
       }
     });
     return result.data;
+  },
+  async distance(location: Coordinates, destination: Coordinates) {
+    const url = `https://api.openrouteservice.org/v2/directions/driving-car`
+    const result = await axios.get(url, {
+      params: {
+        "api_key": API_KEY,
+        "start": `${location.lng},${location.lat}`,
+        "end": `${destination.lng},${destination.lat}`
+      }
+    })
+    return result.data.features[0].properties.segments[0].distance;
   }
 }
 

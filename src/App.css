@@ -1,0 +1,199 @@
+/* Auth */
+.img-logo {
+  width: 80px;
+}
+
+.color-gradient {
+  background: linear-gradient(to right, #3366ff 0%, #99ccff 60%, #3366ff 100%);
+}
+
+.login-form-position {
+  top: 12%;
+  right: 12%;
+}
+
+.layout-boder {
+  border-radius: 50px;
+}
+
+.event-hover {
+  cursor: pointer;
+}
+
+.event-hover:hover {
+  color: red !important;
+}
+
+.modal {
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-container {
+  display: flex;
+  flex-direction: row;
+  width: 600px;
+  min-height: 600px;
+  background-color: #fff;
+  position: relative;
+  animation: growth ease 0.4s, fadeIn ease 0.4s;
+}
+
+.maxWidth-form {
+  max-width: 500px;
+}
+
+/* Map  */
+.map-container {
+  width: 100%;
+  height: 100vh;
+}
+
+.sidebar {
+  background-color: rgba(35, 55, 75, 0.9);
+  color: #fff;
+  padding: 6px 12px;
+  font-family: monospace;
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 12px;
+  border-radius: 4px;
+}
+
+.div-search {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 13%;
+  margin: 12px;
+  min-width: 400px;
+  max-Width: 600px
+}
+
+.input-search {
+  border-radius: 10px;
+}
+
+.item-search {
+  margin-left: 45px;
+}
+
+.map-navigate {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  width: 100vw;
+  background-color: #fff
+}
+
+.logo-search {
+  max-width: 20px;
+  min-width: 20px;
+}
+
+
+
+
+
+
+
+.item-avatar-chat {
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: 1px black;
+}
+
+.head-content-chat {
+  min-height: 40px;
+  max-height: 50px;
+}
+
+.nav-chat-scroll {
+  min-height: 85vh;
+  max-height: 50vh;
+  overflow-y: scroll;
+}
+
+.max-height {
+  height: 100vh;
+}
+
+.chat-title .chat-header {
+  height: 10vh;
+}
+
+.chat-header {
+  height: 8vh;
+}
+
+.chat-input {
+  height: 7vh;
+}
+
+.chat-content {
+  height: 85vh;
+  overflow-y: scroll;
+}
+
+.li-nav:hover {
+  background-color: #EFF5F5;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.img-upload-review {
+  width: 400px;
+  height: 250px;
+  object-fit: contain;
+}
+
+.col-1,
+.col-2,
+.col-3,
+.col-4,
+.col-5,
+.col-6,
+.col-7,
+.col-8,
+.col-9,
+.col-10,
+.col-11,
+.col-12 {
+  margin: 0;
+}
+
+.col-1 {
+  width: 12%;
+}
+
+.col-11 {
+  width: 88%;
+}
+
+.img-logo {
+  width: 50px;
+}
+
+.bg-navbar {
+  background-color: #1e1e2d
+}
+
+.item-navbar:hover {
+  background-color: #000000;
+  cursor: pointer
+}

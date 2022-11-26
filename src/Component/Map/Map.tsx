@@ -2,9 +2,11 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import "./style.css"
 import googleMapApi from '../../api/googleMapApi';
+import { useNavigate } from 'react-router-dom';
 mapboxgl.accessToken = 'pk.eyJ1IjoidGhhbmhjbyIsImEiOiJjbDgzdjFyeHYwOW1hM25tcHBlZTlveTAwIn0.hIwtYHcABmKWnG9goNPd5A';
 
 export default function App() {
+  const navigate = useNavigate();
   const mapContainer: any = useRef(null);
   const map: any = useRef(null);
   const [lng, setLng] = useState(0);
@@ -21,7 +23,7 @@ export default function App() {
         center: [position.coords.longitude, position.coords.latitude],
         zoom: zoom
       });
-      console.log("1")
+      
       setLat(position.coords.latitude)
       setLng(position.coords.longitude)
 
@@ -84,17 +86,8 @@ export default function App() {
   return (
     <div>
       <div className="div-search">
-        {/* <div className="">
-          <input className="form-control fs-5 input-search" type="search" />
-
-        </div> */}
         <div className="">
           <div className="input-group">
-            <span className="input-group-append">
-              <button className="btn btn-outline-secondary bg-white border-start-0 border-bottom-0 border ms-n5" type="button">
-                <img className="logo-search" src={process.env.PUBLIC_URL + "/images/go_ship.png"} alt="" />
-              </button>
-            </span>
             <input className="form-control" type="search" onChange={(e) => searchMap(e)} />
             <span className="input-group-append">
               <button className="btn btn-outline-secondary bg-white border-start-0 border-bottom-0 border ms-n5" type="button">
@@ -109,7 +102,7 @@ export default function App() {
               return (
                 <div
                   key={index}
-                  className="bg-light border border-1 event-hover p-1 item-search"
+                  className="bg-light border border-1 event-hover p-1"
                   onClick={() => handleClickSearchItem(item.geometry.coordinates)}
                 >
                   {item.properties.label}
@@ -123,11 +116,7 @@ export default function App() {
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
       <div ref={mapContainer} className="map-container" onClick={(e) => aaa(e)} />
-      <div className="d-flex justify-content-evenly p-3 fs-1 map-navigate">
-        <i className="fa-solid fa-house"></i>
-        <i className="fa-solid fa-plus"></i>
-        <i className="fa-solid fa-list"></i>
-      </div>
+      
     </div>
   );
 }

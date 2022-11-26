@@ -1,38 +1,36 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"
 
 import Auth from '../../interfaces/auth';
 import authApi from '../../api/authApi';
 import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
 import constraint from '../../constraint';
-import { auth, firebase } from "../../config/firebase-config"
+import { authentication } from "../../config/firebase-config";
 
-import './auth.css'
 
 const Register = () => {
   const navigate = useNavigate()
+  const areaCode = "+84";
   const [openBoxOTP, setOpenBoxOTP] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [messageError, setMessageError] = useState("");
   const [isError, setIsError] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [otp, setOTP] = useState("");
   const [final, setfinal] = useState<any>();
-
-  const navigateLogin = () => {
-    navigate('/login');
-  }
+  const [verify, setVerify] = useState<any>();
 
   const handleRegister = async () => {
-    if (password != rePassword) {
+    if (password !== rePassword) {
       setMessageError("Mật khẩu nhập không khớp");
       setIsError(true);
       return;
     }
-    let verify = new firebase.auth.RecaptchaVerifier('recaptcha-container');
     try {
       const user: Auth = {
         phone_number: phone,
@@ -41,10 +39,22 @@ const Register = () => {
         token_device: ""
       }
       await yupAuth.validate(user);
-      const result = await auth.signInWithPhoneNumber(phone, verify);
-      setfinal(result);
-      setOpenBoxOTP(!openBoxOTP);
-      console.log(result)
+
+      const appVerifier = new RecaptchaVerifier('recaptcha-container', {
+        'callback': (response: any) => {
+          setOpenBoxOTP(!openBoxOTP);
+        }
+      }, authentication);
+
+      signInWithPhoneNumber(authentication, areaCode + phone, appVerifier)
+        .then((confirmationResult) => {
+          console.log("da set")
+          setfinal(confirmationResult);
+          appVerifier.clear()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
     catch (err: any) {
       console.log(err)
@@ -56,7 +66,6 @@ const Register = () => {
       }
       setIsError(true);
     }
-    verify.clear();
   }
 
   const handleHideOTP = () => {
@@ -64,28 +73,38 @@ const Register = () => {
   }
 
   const handleAcceptOTP = async () => {
-    final.confirm(otp).then(async () => {
-      try {
-        const auth: Auth = {
-          phone_number: "0123451234",
-          password: password,
-          role: 1,
-          token_device: ""
+    final.confirm(otp)
+      .then(async (result: any) => {
+        try {
+          const auth: Auth = {
+            phone_number: ("0" + phone),
+            password: password,
+            role: 1,
+            token_device: ""
+          }
+          setOpenBoxOTP(false);
+          setWaiting(true)
+          await authApi.register(auth);
+          setWaiting(false)
+          setRegisterSuccess(true);
         }
-        await authApi.register(auth);
-        setOpenBoxOTP(false);
-        setRegisterSuccess(true);
-      }
-      catch (err) {
-        setIsError(true);
-        setMessageError(String(err));
-      }
-    }).catch((err: any) => {
-      alert("Wrong code");
-    })
+        catch (err) {
+          setWaiting(false)
+          setIsError(true);
+          setMessageError(String(err));
+        }
+      })
+      .catch((error: any) => {
+        alert("Wrong code");
+      })
   }
 
-  const handleAcceptError = () => {
+  const navigateLogin = () => {
+    navigate('/login');
+  }
+
+  const handleHideNotification = () => {
+    setWaiting(false);
     setIsError(false);
   }
 
@@ -93,6 +112,7 @@ const Register = () => {
     setRegisterSuccess(false);
     navigate('/login');
   }
+
   return (
     <>
       <div className="container-fluid">
@@ -166,12 +186,19 @@ const Register = () => {
 
             <div className="w-100 m-1">
               <span className="fw-bold">Số điện thoại</span>
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="form-control layout-boder fs-5"
-                type="text"
-                placeholder="0123456789" />
+              <div className="d-flex flex-row">
+                <input
+                  value={areaCode}
+                  className="form-control layout-boder fs-5 w-25 me-2"
+                  type="text"
+                  readOnly />
+                <input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="form-control layout-boder fs-5"
+                  type="text"
+                  placeholder="0123456789" />
+              </div>
             </div>
 
             <div className="w-100 m-1">
@@ -241,7 +268,7 @@ const Register = () => {
             title={constraint.NOTIFICATION}
             icon="fa-solid fa-circle-xmark text-danger"
             message={messageError}
-            handleAcceptError={handleAcceptError} />
+            handleAcceptError={handleHideNotification} />
           :
           <></>
       }
@@ -252,6 +279,17 @@ const Register = () => {
             icon="fa-solid fa-circle-check text-success"
             message="Bạn đã đăng ký tài khoản thành công!"
             handleAcceptError={handleRegisterSuccess} />
+          :
+          <></>
+      }
+      {
+        waiting ?
+          <MessageBox
+            title={constraint.NOTIFICATION}
+            icon="fa-solid fa-arrows-rotate text-danger"
+            message={"Đang Xử Lý! Vui lòng chờ"}
+            handleAcceptError={handleHideNotification}
+          />
           :
           <></>
       }
