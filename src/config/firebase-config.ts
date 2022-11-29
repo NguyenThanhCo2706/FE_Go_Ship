@@ -1,4 +1,7 @@
-import firebase from 'firebase';
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
+import { getDatabase, ref as refDatabase, push, onValue, set } from "firebase/database";
+import { getStorage, ref as refStorage, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyASzPWb2a8M7CTmYIaLABtncxzS0ODM2vU",
@@ -11,7 +14,21 @@ const firebaseConfig = {
   measurementId: "G-BER8LNHWV1"
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const authentication = getAuth(app);
+const storage = getStorage(app);
 
-export { auth, firebase }
+export {
+  authentication,
+  database,
+  refDatabase,
+  push,
+  onValue,
+  set,
+  refStorage,
+  storage,
+  uploadBytes,
+  listAll,
+  getDownloadURL
+} 

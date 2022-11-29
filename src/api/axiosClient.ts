@@ -1,12 +1,12 @@
 import axios, { AxiosRequestConfig } from "axios";
-import ResponseGenerator from "../interfaces/responseGenerator";
 
-const BASE_URL = "https://go-ship-demo.herokuapp.com/api/v1/"
+const BASE_URL = "http://167.71.197.115:8000/api/v1/"
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    "Authorization": `Bearer ${localStorage.getItem("token")}`
   }
 });
 
