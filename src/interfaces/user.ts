@@ -1,13 +1,12 @@
+import Address from "./address";
+
 export default interface User {
+  id?: number,
   name: string,
   address_id?: number,
-  address?: {
-    id: number,
-    address_notes: string,
-    latitude: number,
-    longitude: number,
-  },
-  genders: number,
-  avatar_url: string,
+  address?: Address,
+  gender: number,
+  avatar_url?: string,
+  birth_date?: string,
   distance_view: number,
 }

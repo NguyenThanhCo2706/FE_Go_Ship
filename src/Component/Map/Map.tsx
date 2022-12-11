@@ -1,9 +1,21 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import "./style.css"
-import googleMapApi from '../../api/googleMapApi';
 import { useNavigate } from 'react-router-dom';
-mapboxgl.accessToken = 'pk.eyJ1IjoidGhhbmhjbyIsImEiOiJjbDgzdjFyeHYwOW1hM25tcHBlZTlveTAwIn0.hIwtYHcABmKWnG9goNPd5A';
+import googleMapApi from '../../api/googleMapApi';
+import { MAPBOX_ACCESS_TOKEN } from '../../constraint';
+import {
+  database,
+  refDatabase,
+  refStorage,
+  push,
+  onValue,
+  set,
+  storage,
+  uploadBytes,
+  getDownloadURL
+} from "../../config/firebase-config";
+
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function App() {
   const navigate = useNavigate();
@@ -13,31 +25,58 @@ export default function App() {
   const [lat, setLat] = useState(0);
   const [zoom, setZoom] = useState(14);
   const [listLocation, setListLocation] = useState<Array<any>>([])
+  // const [listAddress, setListAddress] = useState<any>({})
+
   const [listMarkerLocation, setListMarkerLocation] = useState<Array<any>>([])
 
   useEffect(() => {
+
+  }, [])
+
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
+      console.log(position)
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v11',
-        center: [position.coords.longitude, position.coords.latitude],
+        // center: [position.coords.longitude, position.coords.latitude],
+        center: [108.156798, 16.074189],
         zoom: zoom
       });
-      
-      setLat(position.coords.latitude)
-      setLng(position.coords.longitude)
+      console.log("Cow2")
+      // setLat(position.coords.latitude)
+      // setLng(position.coords.longitude)
 
       let marker = new mapboxgl.Marker({
-        element: generateImageMarker(),
+        element: generateImageMarker("marker-person.png"),
         draggable: true
       }).setLngLat([position.coords.longitude, position.coords.latitude]).addTo(map.current);
       marker.getElement().addEventListener('click', () => {
         console.log(marker)
         alert("xin chào cu Bi");
       });
+
+      onValue(refDatabase(database, `location`), data => {
+        const getData: Array<any> = []
+        for (const ele in data.exportVal()) {
+          let obj: any = {};
+          obj[ele] = data.val()[ele];
+          getData.push(obj)
+        }
+        const listAddress = data.val();
+        for (const key in listAddress) {
+          console.log(listAddress[key].longitude)
+          new mapboxgl.Marker({
+            element: generateImageMarker("marker.png"),
+            draggable: true
+          }).setLngLat([listAddress[key].longitude, listAddress[key].latitude]).addTo(map.current);
+        }
+      })
+
     }, (error) => {
       console.log(error)
     });
+    console.log("Cow1")
   }, [])
 
   useEffect(() => {
@@ -77,10 +116,16 @@ export default function App() {
     map.current.setCenter(location);
     map.current.setZoom(zoom);
   }
-  const generateImageMarker = () => {
+  const generateImageMarker = (url: string) => {
     const el = document.createElement('img');
-    el.src = process.env.PUBLIC_URL + "/images/person-icon.png"
+    el.src = process.env.PUBLIC_URL + `/images/${url}`
     el.style.width = "30px";
+    return el;
+  }
+  const generateMarkerShipper = () => {
+    const el = document.createElement('img');
+    el.src = process.env.PUBLIC_URL + "/images/marker.png"
+    el.style.width = "50px";
     return el;
   }
   return (
@@ -116,7 +161,7 @@ export default function App() {
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div>
       <div ref={mapContainer} className="map-container" onClick={(e) => aaa(e)} />
-      
+
     </div>
   );
 }

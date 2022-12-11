@@ -1,12 +1,12 @@
 import Category from "../interfaces/category";
-import ResponseGenerator from "../interfaces/responseGenerator";
+import ResponseData from "../interfaces/responseData";
 import axiosClient from "./axiosClient"
 
 
 const categoryApi = {
-  async getList(): Promise<ResponseGenerator<Array<Category>>> {
+  async getList(): Promise<ResponseData<Array<Category>>> {
     const url = `category/`;
-    const result: ResponseGenerator<any> = await axiosClient.get(url);
+    const result: ResponseData<any> = await axiosClient.get(url);
     return result;
   },
 
