@@ -1,12 +1,12 @@
-import ResponseGenerator from "../interfaces/responseGenerator";
+import ResponseData from "../interfaces/responseData";
 import Payment from "../interfaces/payment";
 import axiosClient from "./axiosClient"
 
 
 const paymentApi = {
-  async getList(): Promise<ResponseGenerator<Array<Payment>>> {
+  async getList(): Promise<ResponseData<Array<Payment>>> {
     const url = `payment/`;
-    const result: ResponseGenerator<any> = await axiosClient.get(url);
+    const result: ResponseData<any> = await axiosClient.get(url);
     return result;
   },
 

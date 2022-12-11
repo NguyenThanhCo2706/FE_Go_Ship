@@ -1,5 +1,6 @@
 import Address from "../interfaces/address";
-import ResponseGenerator from "../interfaces/responseGenerator";
+import Order from "../interfaces/Order";
+import ResponseData from "../interfaces/responseData";
 import ResponseGetPrice from "../interfaces/responseGetPrice";
 import axiosClient from "./axiosClient"
 
@@ -35,9 +36,14 @@ const orderApi = {
       "distance": distance,
       "is_protected": is_protected
     });
-    const result: ResponseGenerator<ResponseGetPrice> = await axiosClient.post(url, data);
+    const result: ResponseData<ResponseGetPrice> = await axiosClient.post(url, data);
     return result.data;
-  }
+  },
+  async getHistoryOrder(page: number): Promise<any> {
+    const url = `/order/?page=${page}`;
+    const result: any = await axiosClient.get(url);
+    return result.data;
+  },
 }
 
 export default orderApi;

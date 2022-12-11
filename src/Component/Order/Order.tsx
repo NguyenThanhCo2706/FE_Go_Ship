@@ -4,25 +4,20 @@ import categoryApi from "../../api/categoryApi";
 import googleMapApi from "../../api/googleMapApi";
 import orderApi from "../../api/orderApi";
 import paymentApi from "../../api/paymentApi";
-import statusApi from "../../api/statusApi";
 import constraint from "../../constraint";
 import Address from "../../interfaces/address";
 import Category from "../../interfaces/category";
 import Payment from "../../interfaces/payment";
-import ResponseStatus from "../../interfaces/responseStatus";
 import MessageBox from "../Commons/MessageBox";
 import {
-
   refStorage,
   storage,
   uploadBytes,
-  listAll,
   getDownloadURL,
 } from "../../config/firebase-config";
-import { getMetadata } from "firebase/storage";
 
-const Order = () => {
-
+const Order = (props: any) => {
+  const myPhone: string = props.phone;
   const mapContainer: any = useRef(null);
   const map: any = useRef(null);
   const [lng, setLng] = useState(108.178843);
@@ -151,7 +146,7 @@ const Order = () => {
   }
 
   const handleUpload = (e: any) => {
-    const imageRef = refStorage(storage, `images/order/${e.target.files![0].name}`);
+    const imageRef = refStorage(storage, `Order/${myPhone}/${e.target.files![0].name}.jpg`);
     uploadBytes(imageRef, e.target.files![0]).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(url => {
         setImgOrder(url)
@@ -160,7 +155,7 @@ const Order = () => {
   }
   console.log(imgOrder)
   return (
-    <>
+    <div className="container-fluid">
       <div className="row">
         <div className="col-5">
           <div className="max-height d-flex flex-column justify-content-center ps-5 pe-5 overflow-auto">
@@ -216,6 +211,7 @@ const Order = () => {
               <input
                 type="file"
                 className="form-control"
+                accept=".png, .jgp"
                 onChange={(e) => handleUpload(e)}
               />
             </div>
@@ -252,7 +248,7 @@ const Order = () => {
             </div>
           </div>
         </div>
-        <div className="col-7">
+        <div className="col">
           <div ref={mapContainer} className="map-container" />
         </div>
       </div>
@@ -277,7 +273,7 @@ const Order = () => {
           :
           <></>
       }
-    </>
+    </div>
   )
 }
 

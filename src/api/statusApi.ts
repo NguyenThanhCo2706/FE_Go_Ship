@@ -1,13 +1,13 @@
-import ResponseGenerator from "../interfaces/responseGenerator";
-import ResponseStatus from "../interfaces/responseStatus";
+import ResponseData from "../interfaces/responseData";
+import Status from "../interfaces/status";
 import axiosClient from "./axiosClient"
 
 
 const statusApi = {
-  async getList(): Promise<ResponseGenerator<Array<ResponseStatus>>> {
+  async getList() {
     const url = `status/`;
-    const result: ResponseGenerator<any> = await axiosClient.get(url);
-    return result;
+    const result: ResponseData<any> = await axiosClient.get(url);
+    return result.data;
   },
 }
 
