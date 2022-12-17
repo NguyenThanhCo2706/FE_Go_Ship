@@ -1,7 +1,7 @@
 const MessageBox = (props: any) => {
   return (
     <>
-      <div className="modal active">
+      <div className="modal active text-dark">
         <div
           className="d-flex flex-column flex-wrap align-content-center flex-wrap align-items-center position-relative bg-white p-5 layout-boder"
           onClick={e => e.stopPropagation()}

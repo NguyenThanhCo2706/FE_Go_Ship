@@ -2,11 +2,18 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 import authApi from '../../api/authApi';
-import { setLocalStorage } from '../../utils';
+import { handleError, setLocalStorage } from '../../utils';
 import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
 import constraint from '../../constraint';
 
+interface Data {
+  phone_number: string,
+  access_token: string,
+  refresh_token: string,
+  detail: string
+  role: number,
+}
 
 
 const Login = (props: any) => {
@@ -28,18 +35,26 @@ const Login = (props: any) => {
         password: password,
       })
       setWaiting(true);
-      const response = await authApi.login(phone, password);
-      console.log(response.data)
-      if (response?.data?.access_token) {
-        setLocalStorage(response.data.access_token);
+      const data: Data = await authApi.login(phone, password);
+      if (data.role !== 1) {
+        alert("Website chưa hỗ trợ cho người dùng này")
+        navigate("/login");
+        return;
       }
+      console.log(data);
+      setLocalStorage(data.access_token);
       navigate("/home");
     }
     catch (err: any) {
+      console.log("web", err);
       setWaiting(false);
       setIsError(true);
-      err?.message ? setMessageError(String("Tài khoản hoặc mật khẩu không chính xác!")) : setMessageError(String(err));
-      console.log((err));
+      if (err.response && err.response.status) {
+        setMessageError(handleError(err));
+      }
+      else {
+        setMessageError(err.message)
+      }
     }
   }
   const handleHideNotification = () => {

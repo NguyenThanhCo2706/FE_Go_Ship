@@ -8,6 +8,7 @@ import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
 import constraint from '../../constraint';
 import { authentication } from "../../config/firebase-config";
+import { handleError } from '../../utils';
 
 
 const Register = () => {
@@ -48,7 +49,6 @@ const Register = () => {
 
       signInWithPhoneNumber(authentication, areaCode + phone, appVerifier)
         .then((confirmationResult) => {
-          console.log("da set")
           setfinal(confirmationResult);
           appVerifier.clear()
         })
@@ -57,12 +57,11 @@ const Register = () => {
         })
     }
     catch (err: any) {
-      console.log(err)
-      if (err?.message) {
-        setMessageError(err?.message);
+      if (err.response && err.response.status) {
+        setMessageError(handleError(err));
       }
       else {
-        setMessageError("")
+        setMessageError(err.message)
       }
       setIsError(true);
     }
@@ -87,15 +86,21 @@ const Register = () => {
           await authApi.register(auth);
           setWaiting(false)
           setRegisterSuccess(true);
+          setOTP("");
         }
-        catch (err) {
+        catch (err: any) {
           setWaiting(false)
           setIsError(true);
-          setMessageError(String(err));
+          if (err.response && err.response.status) {
+            setMessageError(handleError(err));
+          }
+          else {
+            setMessageError(err.message)
+          }
         }
       })
       .catch((error: any) => {
-        alert("Wrong code");
+        alert("Mã xác nhận không đúng");
       })
   }
 
@@ -236,7 +241,7 @@ const Register = () => {
       {
         openBoxOTP ?
           <>
-            <div className="modal active" onClick={handleHideOTP}>
+            <div className="modal active text-dark" onClick={handleHideOTP}>
               <div
                 className="d-flex flex-column flex-wrap align-content-center flex-wrap align-items-center position-relative bg-white p-5 layout-boder"
                 onClick={e => e.stopPropagation()}

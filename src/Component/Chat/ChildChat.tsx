@@ -18,6 +18,7 @@ import { URL_IMAGES } from "../../constraint";
 import { caculateAge } from "../../utils";
 
 import { useParams } from "react-router-dom"
+import { getMetadata } from "firebase/storage";
 
 const ChildChat = (props: any) => {
   const params: any = useParams();
@@ -64,14 +65,15 @@ const ChildChat = (props: any) => {
   }
 
   const handleUpload = (e: any) => {
-    let imageRef;
+    let ref;
+    const date = new Date().toISOString();
     if (typeUpload === "IMAGE") {
-      imageRef = refStorage(storage, `messages/${myPhone}/${e.target.files![0].name}.jpg`);
+      ref = refStorage(storage, `messages/${myPhone}/${date}.jpg`);
     }
     else {
-      imageRef = refStorage(storage, `messages/${myPhone}/${e.target.files![0].name}.mp4`);
+      ref = refStorage(storage, `messages/${myPhone}/${date}.mp4`);
     }
-    uploadBytes(imageRef, e.target.files![0]).then((snapshot) => {
+    uploadBytes(ref, e.target.files![0]).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(url => {
         push(refDatabase(database, `messages/${myPhone}/${yourPhone}`), {
           dateTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
@@ -125,7 +127,7 @@ const ChildChat = (props: any) => {
 
   return (
     <>
-      <div className="col ">
+      <div className="col">
         {yourPhone ?
           <>
             <div className="d-flex flex-column justify-content-between max-height">
@@ -169,7 +171,6 @@ const ChildChat = (props: any) => {
                 {listMessages?.map((item, index, array) => {
                   const date1 = dayjs(item.dateTime);
                   const diffTime = date1.diff(array[index - 1]?.dateTime, 'minute', true);
-                  console.log(item.image.substring(item.image.length - 3))
                   return (
                     <div key={index}>
                       {
@@ -178,12 +179,11 @@ const ChildChat = (props: any) => {
                           :
                           <></>
                       }
-
                       {item.senderPhone === myPhone ?
                         <div className="d-flex flex-row justify-content-end">
                           {
                             item.image ?
-                              item.image.substring(item.image.length - 3) === "jpg" ?
+                              item.image.includes("jpg") ?
                                 <img src={item.image} alt="" className="img-chat-content m-1" />
                                 :
                                 <video className="img-chat-content m-1" controls>

@@ -1,4 +1,6 @@
 // eslint-disable-next-line import/no-anonymous-default-export
+export const BASE_URL = "http://167.71.197.115:8000/api/v1/";
+
 export default {
   NOTIFICATION: "Notification",
   SUCCESS: "Success",
