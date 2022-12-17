@@ -123,7 +123,9 @@
 }
 
 .nav-chat-scroll {
-  height: calc(100vh - var(--nav-width) - 80px -16px);
+  margin-top: 10px;
+  /* height: calc(100vh - var(--nav-width) - 80px -16px); */
+  height: 81vh;
   overflow-y: auto;
 }
 
@@ -240,9 +242,9 @@ a {
   object-fit: contain;
 }
 
-.header_img img {
+/* .header_img img {
   width: 40px
-}
+} */
 
 .l-navbar {
   position: fixed;

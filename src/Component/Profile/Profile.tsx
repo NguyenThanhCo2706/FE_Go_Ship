@@ -80,14 +80,16 @@ const Profile = (props: any) => {
 
   const handleClickPagination = async (page: number) => {
     setHistory([])
-
     const data = await orderApi.getHistoryOrder(page)
     setTotal(data.total);
     setHistory(data.orders)
   }
 
   const Pagination = () => {
-    const tmp = [];
+    if (total <= 10) {
+      return <></>;
+    }
+    const tmp = [<li className="page-item"><p className="page-link">Previous</p></li>];
     for (let i = 1; i <= Math.ceil(total / 10); i++) {
       tmp.push(
         <li
@@ -98,9 +100,12 @@ const Profile = (props: any) => {
         </li>
       )
     }
-    return <>
-      {tmp}
-    </>;
+    tmp.push(<li className="page-item"><p className="page-link">Next</p></li>);
+    return (
+      <>
+        {tmp}
+      </>
+    );
   }
 
   const openChooseFile = () => {
@@ -117,9 +122,20 @@ const Profile = (props: any) => {
     })
   }
 
-  const handleNavStatus = (id: number) => {
+  const handleNavStatus = async (id: number) => {
+    if (id === 0) {
+      const data = await orderApi.getHistoryOrder(1)
+      setTotal(data.total);
+      setHistory((data.orders))
+      return;
+    }
     setTargetStatus(id);
+    const data = await orderApi.getOrderByStatus(id, 1);
+    console.log(data)
+    setHistory(data.orders);
+    setTotal(data.total);
   }
+  // console.log(history);
 
   return (
     <div className="max-height">
@@ -193,9 +209,7 @@ const Profile = (props: any) => {
               <div className="d-flex justify-content-center">
                 <nav aria-label="Page navigation example">
                   <ul className="pagination">
-                    <li className="page-item"><p className="page-link">Previous</p></li>
                     <Pagination />
-                    <li className="page-item"><p className="page-link">Next</p></li>
                   </ul>
                 </nav>
               </div>

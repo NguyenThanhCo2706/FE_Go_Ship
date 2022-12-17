@@ -8,14 +8,14 @@ import { FC, useEffect, useState } from "react";
 import User from "../../interfaces/user";
 import userApi from "../../api/userApi";
 import { URL_IMAGES } from "../../constraint";
+import authApi from "../../api/authApi";
 
 const Home1 = (props: any) => {
-  console.log(props)
   const [active, setActive] = useState(true);
   const [profile, setProfile] = useState<User>();
 
   const navigate = useNavigate()
-
+  console.log(localStorage.getItem("token"));
   useEffect(() => {
     userApi.getDetail()
       .then((response) => {
@@ -24,7 +24,12 @@ const Home1 = (props: any) => {
       .catch((error) => {
 
       });
-  }, [])
+  }, []);
+  const handleLogout = async () => {
+    await authApi.logout();
+    localStorage.removeItem("token");
+    navigate("/");
+  }
   return (
     <>
       <div className={classNames("body-home", { "body-pd": active, "aaa": active })} id="body-pd">
@@ -63,7 +68,7 @@ const Home1 = (props: any) => {
                 </p>
               </div>
             </div>
-            <p className="nav_link event-hover" onClick={() => navigate("/login")}>
+            <p className="nav_link event-hover" onClick={() => handleLogout()}>
               <i className='bx bx-log-out nav_icon'></i>
               <span className="nav_name">
                 SignOut

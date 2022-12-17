@@ -25,13 +25,15 @@ export default function App() {
   const [lat, setLat] = useState(0);
   const [zoom, setZoom] = useState(14);
   const [listLocation, setListLocation] = useState<Array<any>>([])
+  const [nameSearch, setNameSearch] = useState("");
   // const [listAddress, setListAddress] = useState<any>({})
 
   const [listMarkerLocation, setListMarkerLocation] = useState<Array<any>>([])
 
-  useEffect(() => {
-
-  }, [])
+  const handleSearch = (e: any) => {
+    setListLocation([]);
+    setNameSearch(e.target.value)
+  }
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -100,12 +102,12 @@ export default function App() {
     // map.current.setCenter([108.25956, 15.82898]);
     // map.current.setZoom(13);
   }
-  const searchMap = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === "") {
+  const searchMap = async () => {
+    if (nameSearch === "") {
       setListLocation([])
       return;
     }
-    const data: any = await googleMapApi.searchname(e.target.value);
+    const data: any = await googleMapApi.searchname(nameSearch);
     console.log(data.features);
     setListLocation(data.features)
     data.features.map((item: any) => {
@@ -133,8 +135,8 @@ export default function App() {
       <div className="div-search">
         <div className="">
           <div className="input-group">
-            <input className="form-control" type="search" onChange={(e) => searchMap(e)} />
-            <span className="input-group-append">
+            <input className="form-control" type="search" onChange={(e) => handleSearch(e)} />
+            <span className="input-group-append" onClick={() => searchMap()}>
               <button className="btn btn-outline-secondary bg-white border-start-0 border-bottom-0 border ms-n5" type="button">
                 <i className="fa fa-search"></i>
               </button>

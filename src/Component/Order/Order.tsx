@@ -15,6 +15,8 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "../../config/firebase-config";
+import { yupOrder } from "../../validation/validation";
+import { handleError } from "../../utils";
 
 const Order = (props: any) => {
   const myPhone: string = props.phone;
@@ -30,7 +32,7 @@ const Order = (props: any) => {
   const [decription, setDecription] = useState("");
   const [distance, setDistance] = useState(0);
   const [customerNote, setCustomerNote] = useState("");
-  const [imgOrder, setImgOrder] = useState<any>(null);
+  const [imgOrder, setImgOrder] = useState<any>("");
   const [paymentList, setPaymentList] = useState<Array<Payment>>();
   const [paymentId, setPaymentId] = useState(1);
   const [categoryList, setCategoryList] = useState<Array<Category>>();
@@ -38,6 +40,9 @@ const Order = (props: any) => {
   const [addSuccess, setAddSuccess] = useState(false);
   const [addFailure, setAddFailure] = useState(false);
   const [money, setMoney] = useState(0);
+
+  const [messageError, setMessageError] = useState("");
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -64,19 +69,28 @@ const Order = (props: any) => {
       markerDel.remove();
       setMarkers(markers);
     }
-    console.log(markers)
-    setAddressStart(prev => ({
-      ...prev,
-      latitude: markers[0]?._lngLat.lat,
-      longitude: markers[0]?._lngLat.lng,
-      address_notes: markers[0] === undefined ? "" : "location"
-    }))
-    setAddressEnd(prev => ({
-      ...prev,
-      latitude: markers[1]?._lngLat.lat,
-      longitude: markers[1]?._lngLat.lng,
-      address_notes: markers[1] === undefined ? "" : "destination"
-    }))
+    if (markers[0]) {
+      googleMapApi.getNameByLocation(markers[0]?._lngLat.lng, markers[0]?._lngLat.lat).then(data => {
+        setAddressStart(prev => ({
+          ...prev,
+          latitude: markers[0]._lngLat.lat,
+          longitude: markers[0]._lngLat.lng,
+          address_notes: data
+        }))
+      })
+    }
+
+    if (markers[1]) {
+      googleMapApi.getNameByLocation(markers[1]?._lngLat.lng, markers[1]?._lngLat.lat).then(data => {
+        setAddressEnd(prev => ({
+          ...prev,
+          latitude: markers[1]?._lngLat.lat,
+          longitude: markers[1]?._lngLat.lng,
+          address_notes: data
+        }))
+      })
+    }
+
     if (markers.length === 2) {
       googleMapApi.distance(markers[0]?._lngLat, markers[1]?._lngLat).then((result) => {
         setDistance(result / 1000)
@@ -134,14 +148,32 @@ const Order = (props: any) => {
 
   const handleSubmit = async () => {
     try {
+      await yupOrder.validate({
+        address_start: addressStart,
+        address_end: addressEnd,
+        categoryId: categoryId,
+        paymentId: paymentId,
+        customer_notes: customerNote,
+        description: decription,
+        distance: distance,
+        img_order: imgOrder
+      });
+
       await orderApi.create(
         addressStart, addressEnd, decription, distance, customerNote, imgOrder, paymentId, categoryId
       );
       setAddSuccess(true);
       defaultValue();
     }
-    catch (error) {
-      setAddFailure(true);
+    catch (err: any) {
+      console.log(err.message);
+      setIsError(true);
+      if (err.response && err.response.status) {
+        setMessageError(handleError(err));
+      }
+      else {
+        setMessageError(err.message)
+      }
     }
   }
 
@@ -264,12 +296,13 @@ const Order = (props: any) => {
           <></>
       }
       {
-        addFailure ?
+        isError ?
           <MessageBox
-            title={constraint.FAILURE}
-            icon="fa-solid fa-xmark text-danger"
-            message="Bạn đã Đặt hàng thất bại!"
-            handleAcceptError={() => setAddFailure(false)} />
+            title={constraint.NOTIFICATION}
+            icon="fa-solid fa-circle-xmark text-danger"
+            message={messageError}
+            handleAcceptError={() => setIsError(false)}
+          />
           :
           <></>
       }

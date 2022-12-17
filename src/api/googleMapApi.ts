@@ -24,6 +24,17 @@ const googleMapApi = {
       }
     })
     return result.data.features[0].properties.segments[0].distance;
+  },
+  async getNameByLocation(lng: number, lat: number) {
+    const url = `https://api.openrouteservice.org/geocode/reverse`;
+    const result = await axios.get(url, {
+      params: {
+        "api_key": API_KEY,
+        "point.lon": lng,
+        "point.lat": lat
+      }
+    });
+    return result.data.features[0].properties.label;
   }
 }
 

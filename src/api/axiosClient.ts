@@ -1,24 +1,12 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { BASE_URL } from "../constraint";
 
-const BASE_URL = "http://167.71.197.115:8000/api/v1/"
-
-let axiosClient = axios.create({
+const axiosClient = axios.create({
   baseURL: BASE_URL,
   headers: {
-    "Content-Type": "application/json",
-    // "Authorization": `Bearer ${localStorage.getItem("token")}`
+    "Content-Type": "application/json"
   }
 });
-
-if (localStorage.getItem("token")) {
-  axiosClient = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem("token")}`
-    }
-  });
-}
 
 axiosClient.interceptors.request.use((config: AxiosRequestConfig) => {
   return config;
