@@ -17,7 +17,7 @@ interface Data {
 
 
 const Login = (props: any) => {
-  const { phone, setPhone } = props;
+  const { phone, setPhone, setValidToken } = props;
   const [password, setPassword] = useState("");
   const [messageError, setMessageError] = useState("");
   const [isError, setIsError] = useState(false);
@@ -38,10 +38,11 @@ const Login = (props: any) => {
       const data: Data = await authApi.login(phone, password);
       if (data.role !== 1) {
         alert("Website chưa hỗ trợ cho người dùng này")
-        navigate("/login");
+        navigate("/");
+        setWaiting(false);
         return;
       }
-      console.log(data);
+      setValidToken(true);
       setLocalStorage(data.access_token);
       navigate("/home");
     }
@@ -49,12 +50,7 @@ const Login = (props: any) => {
       console.log("web", err);
       setWaiting(false);
       setIsError(true);
-      if (err.response && err.response.status) {
-        setMessageError(handleError(err));
-      }
-      else {
-        setMessageError(err.message)
-      }
+      setMessageError(err.message)
     }
   }
   const handleHideNotification = () => {

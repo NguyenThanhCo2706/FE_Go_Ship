@@ -57,12 +57,7 @@ const Register = () => {
         })
     }
     catch (err: any) {
-      if (err.response && err.response.status) {
-        setMessageError(handleError(err));
-      }
-      else {
-        setMessageError(err.message)
-      }
+      setMessageError(err.message)
       setIsError(true);
     }
   }
@@ -91,12 +86,7 @@ const Register = () => {
         catch (err: any) {
           setWaiting(false)
           setIsError(true);
-          if (err.response && err.response.status) {
-            setMessageError(handleError(err));
-          }
-          else {
-            setMessageError(err.message)
-          }
+          setMessageError(err.message)
         }
       })
       .catch((error: any) => {

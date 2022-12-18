@@ -2,11 +2,11 @@
 
 export const handleError = (error: any) => {
   switch (error.response.status) {
-    case 400:
+    case 400 || 403:
       return error.response.data.detail;
     case 500:
       return "Đang có lỗi ở Server";
     default:
-      return "OOps";
+      return "Error";
   }
 }
