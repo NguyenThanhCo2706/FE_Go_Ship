@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { BASE_URL } from "../constraint";
+import { handleError } from "../utils";
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
@@ -18,7 +19,8 @@ axiosClient.interceptors.request.use((config: AxiosRequestConfig) => {
 axiosClient.interceptors.response.use((response) => {
   return response.data;
 }, function (error) {
-  return Promise.reject(error);
+  const message = handleError(error);
+  return Promise.reject({ message: message });
 });
 
 export default axiosClient;

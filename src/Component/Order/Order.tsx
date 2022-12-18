@@ -168,12 +168,7 @@ const Order = (props: any) => {
     catch (err: any) {
       console.log(err.message);
       setIsError(true);
-      if (err.response && err.response.status) {
-        setMessageError(handleError(err));
-      }
-      else {
-        setMessageError(err.message)
-      }
+      setMessageError(err.message)
     }
   }
 
