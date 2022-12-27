@@ -64,7 +64,7 @@ const orderApi = {
     return result.data;
   },
   async getDetailOrder(id: number) {
-    const url = `http://167.71.197.115:8000/api/v1/order/order-detail/${id}/`;
+    const url = `/order/order-detail/${id}/`;
     const result: ResponseData<any> = await axiosClient.get(url, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
