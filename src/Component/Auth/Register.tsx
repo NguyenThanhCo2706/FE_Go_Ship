@@ -6,7 +6,7 @@ import Auth from '../../interfaces/auth';
 import authApi from '../../api/authApi';
 import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
-import constraint from '../../constraint';
+import { MESSAGES } from '../../constraint';
 import { authentication } from "../../config/firebase-config";
 import { handleError } from '../../utils';
 
@@ -153,7 +153,7 @@ const Register = () => {
           <div className="row p-5 fs-5">
             <div className="col-3">
               <img src={process.env.PUBLIC_URL + "/images/coins1.png"} alt="" />
-              <p className="fw-bold">Tích điểm nhanh chóng</p>
+              <p className="fw-bold fs-4">Tích điểm nhanh chóng</p>
               <span>Tích điểm với mỗi lượt đặt giao hàng thành công, quy đổi điểm để tiết kiệm nhiều hơn.</span>
             </div>
             <div className="col-3">
@@ -175,11 +175,10 @@ const Register = () => {
             </div>
           </div>
         </div>
-        <div className="position-absolute login-form-position layout-boder shadow-lg p-5 mb-5 bg-body maxWidth-form">
-          <div className="d-flex flex-column align-items-center fs-5">
-            <p className="fw-bold m-3 fs-4">Đăng ký thành viên</p>
-
-            <div className="w-100 m-1">
+        <div className="position-absolute login-form-position p-5 layout-boder d-flex flex-column justify-content-center bg-white shadow fs-5">
+          <div className="fw-bold text-center fs-4 mb-4">Đăng ký thành viên</div>
+          <div className="mb-4">
+            <div className="mb-3">
               <span className="fw-bold">Số điện thoại</span>
               <div className="d-flex flex-row">
                 <input
@@ -190,13 +189,13 @@ const Register = () => {
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="form-control layout-boder fs-5"
+                  className="form-control layout-boder fs-5 w-75"
                   type="text"
                   placeholder="0123456789" />
               </div>
             </div>
 
-            <div className="w-100 m-1">
+            <div className="mb-3">
               <span className="fw-bold">Mật khẩu</span>
               <input
                 onChange={(e) => setPassword(e.target.value)}
@@ -204,7 +203,7 @@ const Register = () => {
                 type="password"
                 placeholder="********" />
             </div>
-            <div className="w-100 m-1">
+            <div className="">
               <span className="fw-bold">Xác nhận mật khẩu</span>
               <input
                 onChange={(e) => setRePassword(e.target.value)}
@@ -212,19 +211,17 @@ const Register = () => {
                 type="password"
                 placeholder="********" />
             </div>
-            <button
-              onClick={handleRegister}
-              className="form-control layout-boder bg-primary text-white m-3 fs-5"
-            >Đăng ký</button>
+          </div>
+          <button
+            onClick={handleRegister}
+            className="form-control layout-boder bg-primary text-white fs-5 mb-4"
+          >Đăng ký</button>
+          <div className="d-flex justify-content-center mb-3">
             <div id="recaptcha-container"></div>
-            <div className="m-3 text-center">
-              <span>Bạn đã có tài khoản GoShip? </span>
-              <p className="text-primary event-hover" onClick={navigateLogin}>Nhấn vào đây</p>
-            </div>
-            <div className="text-center">
-              <p>Tôi đồng ý với Bảo mật và Điều khoản
-                hoạt động của GoShip</p>
-            </div>
+          </div>
+          <div className="text-center">
+            <span>Bạn đã có tài khoản GoShip? </span>
+            <p className="text-primary event-hover" onClick={navigateLogin}>Nhấn vào đây</p>
           </div>
         </div>
       </div>
@@ -260,7 +257,7 @@ const Register = () => {
       {
         isError ?
           <MessageBox
-            title={constraint.NOTIFICATION}
+            title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-circle-xmark text-danger"
             message={messageError}
             handleAcceptError={handleHideNotification} />
@@ -270,7 +267,7 @@ const Register = () => {
       {
         registerSuccess ?
           <MessageBox
-            title={constraint.SUCCESS}
+            title={MESSAGES.SUCCESS}
             icon="fa-solid fa-circle-check text-success"
             message="Bạn đã đăng ký tài khoản thành công!"
             handleAcceptError={handleRegisterSuccess} />
@@ -280,7 +277,7 @@ const Register = () => {
       {
         waiting ?
           <MessageBox
-            title={constraint.NOTIFICATION}
+            title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
             handleAcceptError={handleHideNotification}

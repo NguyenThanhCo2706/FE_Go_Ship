@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import authApi from '../../api/authApi';
-import { handleError, setLocalStorage } from '../../utils';
+import { setLocalStorage } from '../../utils';
 import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
-import constraint from '../../constraint';
+import { MESSAGES } from '../../constraint';
+import jwt_decode from "jwt-decode";
 
 interface Data {
   phone_number: string,
@@ -23,6 +24,20 @@ const Login = (props: any) => {
   const [isError, setIsError] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const navigate = useNavigate()
+
+  useEffect(() => {
+    try {
+      const tokenDecode = jwt_decode(localStorage.getItem("token") || "");
+
+      setValidToken(true);
+      navigate("/home");
+
+    }
+    catch (err) {
+      navigate("/")
+      setValidToken(false);
+    }
+  }, [localStorage.getItem("token")])
 
   const navigateRegister = () => {
     navigate("/register")
@@ -103,7 +118,7 @@ const Login = (props: any) => {
           <div className="row p-5 fs-5">
             <div className="col-3">
               <img src={process.env.PUBLIC_URL + "/images/coins1.png"} alt="" />
-              <p className="fw-bold">Tích điểm nhanh chóng</p>
+              <p className="fw-bold fs-4">Tích điểm nhanh chóng</p>
               <span>Tích điểm với mỗi lượt đặt giao hàng thành công, quy đổi điểm để tiết kiệm nhiều hơn.</span>
             </div>
             <div className="col-3">
@@ -125,40 +140,42 @@ const Login = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="position-absolute login-form-position layout-boder p-5 shadow-lg p-3 mb-5 bg-body maxWidth-form">
-          <div className="d-flex flex-column align-items-center fs-5">
+        <div className="position-absolute login-form-position p-5 layout-boder d-flex flex-column justify-content-center bg-white shadow fs-5">
+          <div className="text-center">
             <p className="fw-bold m-3 fs-4">Đăng nhập</p>
             <p className="fw-bold mb-4">Đăng nhập GoShip để sử dụng ứng dụng</p>
+          </div>
+          <div>
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="form-control layout-boder m-3 fs-5"
+              className="form-control layout-boder fs-5 mb-4"
               type="text"
               placeholder="Địa chỉ email hoặc số điện thoại"
             />
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="form-control layout-boder m-3 fs-5"
+              className="form-control layout-boder fs-5 mb-4"
               type="password"
               placeholder="Mật khẩu"
             />
-            <button className="form-control layout-boder bg-primary text-white m-3 fs-5" onClick={handleLogin}>Đăng nhập</button>
-            <div className="m-3">
-              <span>Quên mặt khẩu? </span>
-              <span className="text-primary event-hover">Nhấn vào đây</span>
-            </div>
-            <div className="m-3 mb-5">
-              <span>Bạn chưa có tài khoản GoShip? </span>
-              <span className="text-primary event-hover" onClick={navigateRegister}>Đăng ký</span>
-            </div>
+          </div>
+          <button className="form-control layout-boder bg-primary text-white fs-5" onClick={handleLogin}>Đăng nhập</button>
+          <div className="m-3 text-center">
+            <span>Quên mặt khẩu? </span>
+            <span className="text-primary event-hover">Nhấn vào đây</span>
+          </div>
+          <div className="m-3 mb-5">
+            <span>Bạn chưa có tài khoản GoShip? </span>
+            <span className="text-primary event-hover" onClick={navigateRegister}>Đăng ký</span>
           </div>
         </div>
       </div>
       {
         isError ?
           <MessageBox
-            title={constraint.NOTIFICATION}
+            title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-circle-xmark text-danger"
             message={messageError}
             handleAcceptError={handleHideNotification}
@@ -169,7 +186,7 @@ const Login = (props: any) => {
       {
         waiting ?
           <MessageBox
-            title={constraint.NOTIFICATION}
+            title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
             handleAcceptError={handleHideNotification}

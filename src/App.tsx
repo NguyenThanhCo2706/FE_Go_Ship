@@ -1,89 +1,98 @@
-import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
-import jwt_decode from "jwt-decode";
-
-import Login from './Component/Auth/Login';
-import Register from './Component/Auth/Register';
-import Chat from "./Component/Chat/Chat";
-import Home1 from "./Component/Base/Home1";
-import Map from "./Component/Map/Map";
-import Profile from "./Component/Profile/Profile";
-
-import "./App.css";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import Home from "./Component/New/Home";
+import Main from "./Component/New/Main";
+import "./newApp.css";
+import Profile from "./Component/New/Profile";
+import Order from "./Component/New/Order";
+import History from "./Component/New/History";
+import Map from "./Component/New/Travel";
+import Chat from "./Component/New/Chat";
+import ChildChat from "./Component/New/ChildChat";
+import Detail from "./Component/New/Detail";
+import Header from "./Component/New/Header";
 import { useEffect, useState } from "react";
-import Order from "./Component/Order/Order";
-import ChildChat from "./Component/Chat/ChildChat";
+import Login from "./Component/Auth/Login";
+import Register from "./Component/Auth/Register";
+import jwt_decode from "jwt-decode";
 import Page404 from "./Component/Commons/Page404";
-import userApi from "./api/userApi";
-// import Footer from './Component/Base/Footer';
 
-function App() {
+
+const NewApp = () => {
   const [phone, setPhone] = useState("");
-  const token = localStorage.getItem("token");
-  const [validToken, setValidToken] = useState(false)
+  const [validToken, setValidToken] = useState(false);
+  const [avatar, setAvatar] = useState<string>();
   const navigate = useNavigate();
   useEffect(() => {
     try {
-      const a = jwt_decode(localStorage.getItem("token") || "");
+      const tokenDecode: any = jwt_decode(localStorage.getItem("token") || "");
+      setPhone(tokenDecode.phone_number);
+
+      // userApi.getDetail().then(data => {
+      //   setAvatar(data.avatar_url) 
       setValidToken(true);
-      console.log(a);
+      //   navigate("/home");
+
+      // });
     }
     catch (err) {
       console.log(err)
       navigate("/")
       setValidToken(false);
     }
-  }, [])
-  console.log(validToken);
+  }, [localStorage.getItem("token")])
+
   return (
     <>
-      {/* <Router> */}
+      {validToken ? <Header avatar={avatar} /> : <></>}
       <Routes>
         <Route
-          path="/" element={<Login phone={phone} setPhone={setPhone} setValidToken={setValidToken} />} />
+          path="/"
+          element={<Login
+            phone={phone}
+            setPhone={setPhone}
+            vali
+            setValidToken={setValidToken}
+          />}
+        />
         <Route path="/register" element={<Register />} />
         <Route
           path="*"
-          element={<Login phone={phone} setPhone={setPhone} setValidToken={setValidToken} />} />
+          element={<Page404 />} />
         {
           validToken ?
             <>
+              <Route
+                path="/home"
+                element={<Main />}
+              />
+              <Route
+                path="/home/profile"
+                element={<Home><Profile myPhone={phone} setAvatar={setAvatar} /></Home>}
+              />
+              <Route
+                path="/home/order"
+                element={<Home><Order myPhone={phone} /></Home>}
+              />
+              <Route
+                path="/home/map"
+                element={<Home><Map /></Home>}
+              />
+              <Route
+                path="/home/history"
+                element={<Home><History /></Home>}
+              />
+              <Route
+                path="/home/history/detail/:id"
+                element={<Detail />}
+              />
+              <Route
+                path="/home/chat"
+                element={<Chat myPhone={phone} />}
+              />
               <Route path="/home/chat/:yourPhone" element={
-                <Home1>
-                  <Chat
-                    phone={phone}
-                    children={<ChildChat myPhone={phone} yourPhone="0123456789" />}
-                  />
-                </Home1 >
-              }
-              />
-
-              <Route path="/home/chat" element={
-                <Home1>
-                  <Chat phone={phone} ></Chat>
-                </Home1 >
-              }
-              />
-              <Route path="/home/profile" element={
-                <Home1>
-                  <Profile phone={phone} />
-                </Home1 >
-              }
-              />
-              <Route path="/home/map" element={
-                <Home1>
-                  <Map />
-                </Home1 >
-              }
-              />
-              <Route path="/home/order" element={
-                <Home1>
-                  <Order />
-                </Home1 >
-              }
-              />
-              <Route path="/home" element={
-                <Home1>
-                </Home1 >
+                <Chat myPhone={phone}
+                  children={<ChildChat myPhone={phone} />}
+                />
               }
               />
             </>
@@ -91,10 +100,8 @@ function App() {
             <></>
         }
       </Routes>
-      {/* </Router> */}
-
     </>
-  );
+  )
 }
 
-export default App;
+export default NewApp;

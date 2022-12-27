@@ -1,10 +1,11 @@
-// eslint-disable-next-line import/no-anonymous-default-export
-export const BASE_URL = "http://167.71.197.115:8000/api/v1/";
+// export const BASE_URL = "http://167.71.197.115:8000/api/v1/";
+export const BASE_URL = "https://goshipapi.ddns.net/api/v1/";
 
-export default {
-  NOTIFICATION: "Notification",
-  SUCCESS: "Success",
-  FAILURE: "Failure"
+
+export const MESSAGES = {
+  NOTIFICATION: "Thông báo",
+  SUCCESS: "Thành công",
+  FAILURE: "Thất bại"
 }
 
 export const URL_IMAGES = {
@@ -13,3 +14,18 @@ export const URL_IMAGES = {
 }
 
 export const MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoidGhhbmhjbyIsImEiOiJjbDgzdjFyeHYwOW1hM25tcHBlZTlveTAwIn0.hIwtYHcABmKWnG9goNPd5A";
+
+export const GENDER = [
+  { id: 0, value: "Nam" },
+  { id: 1, value: "Nữ" },
+  { id: 2, value: "Buê Đuê" }
+]
+
+export const STATUS = [
+  { id: 1, value: "Đang đợi" },
+  { id: 2, value: "Đã Nhận đơn" },
+  { id: 3, value: "Đang giao hàng" },
+  { id: 4, value: "Không thành công" },
+  { id: 5, value: "Hoàn thành" }
+
+]

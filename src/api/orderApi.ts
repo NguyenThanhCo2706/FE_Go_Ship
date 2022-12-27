@@ -52,9 +52,34 @@ const orderApi = {
     });
     return result.data;
   },
-  async getOrderByStatus(id: number, page: number) {
-    const url = `/order/status/?page=${page}&status_id=${id}`;
+  async getOrderByStatus(page: any, statusId: any) {
+    const url = `/order/status/?page=${page}${statusId ? "&status_id=" + statusId : ""}`;
+    console.log(url);
+
     const result: ResponseData<any> = await axiosClient.get(url, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    return result.data;
+  },
+  async getDetailOrder(id: number) {
+    const url = `http://167.71.197.115:8000/api/v1/order/order-detail/${id}/`;
+    const result: ResponseData<any> = await axiosClient.get(url, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    return result.data;
+  },
+  async ratingOrder(orderId: number, feedback: string, rate: number) {
+    const url = `/order/rate/`;
+    const data = JSON.stringify({
+      "order_id": orderId,
+      "feedback": feedback,
+      "rate": rate
+    });
+    const result: ResponseData<any> = await axiosClient.post(url, data, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       }
