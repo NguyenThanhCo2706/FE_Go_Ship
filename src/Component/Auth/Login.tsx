@@ -7,6 +7,7 @@ import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
 import { MESSAGES } from '../../constraint';
 import jwt_decode from "jwt-decode";
+import userApi from '../../api/userApi';
 
 interface Data {
   phone_number: string,
@@ -27,8 +28,7 @@ const Login = (props: any) => {
 
   useEffect(() => {
     try {
-      const tokenDecode = jwt_decode(localStorage.getItem("token") || "");
-
+      jwt_decode(localStorage.getItem("token") || "");
       setValidToken(true);
       navigate("/home");
 
@@ -62,7 +62,6 @@ const Login = (props: any) => {
       navigate("/home");
     }
     catch (err: any) {
-      console.log("web", err);
       setWaiting(false);
       setIsError(true);
       setMessageError(err.message)
@@ -175,7 +174,7 @@ const Login = (props: any) => {
       {
         isError ?
           <MessageBox
-            title={MESSAGES.NOTIFICATION}
+            title={MESSAGES.FAILURE}
             icon="fa-solid fa-circle-xmark text-danger"
             message={messageError}
             handleAcceptError={handleHideNotification}
@@ -189,7 +188,6 @@ const Login = (props: any) => {
             title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
-            handleAcceptError={handleHideNotification}
           />
           :
           <></>

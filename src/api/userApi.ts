@@ -17,7 +17,7 @@ const userApi = {
   async updateProfile(user: User) {
     const url = "customer/detail/";
     const data = JSON.stringify(user);
-    const result = await axiosClient.put(url, data, {
+    const result = await axiosClient.patch(url, data, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       }

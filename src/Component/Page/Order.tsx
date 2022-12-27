@@ -6,7 +6,6 @@ import paymentApi from "../../api/paymentApi";
 import Address from "../../interfaces/address";
 import Category from "../../interfaces/category";
 import Payment from "../../interfaces/payment";
-import MessageBox from "../Commons/MessageBox";
 import Coordinates from "../../interfaces/coordinates";
 
 import {
@@ -16,11 +15,11 @@ import {
   getDownloadURL,
 } from "../../config/firebase-config";
 import { yupOrder } from "../../validation/validation";
-import { handleError } from "../../utils";
 import Map from "./Map";
 import AddressView from "../../interfaces/addressView";
 import classNames from "classnames";
-
+import MessageBox from "../Commons/MessageBox";
+import { MESSAGES } from "../../constraint";
 
 
 const Order = (props: any) => {
@@ -50,13 +49,13 @@ const Order = (props: any) => {
   const [money, setMoney] = useState(0);
 
   const [disable, setDisable] = useState(false);
-  const [addSuccess, setAddSuccess] = useState(false);
-  const [addFailure, setAddFailure] = useState(false);
+  const [waiting, setWaiting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [failure, setFailure] = useState(false);
   const [messageError, setMessageError] = useState("");
-  const [isError, setIsError] = useState(false);
-
 
   useEffect(() => {
+    setDisable(false);
     const start: Coordinates = {
       lat: addressStart?.latitude,
       lng: addressStart?.longitude
@@ -65,18 +64,28 @@ const Order = (props: any) => {
       lat: addressEnd?.latitude,
       lng: addressEnd?.longitude
     }
-    googleMapApi.distance(start, end).then((data: number) => {
-      setDistance(data / 1000);
-    })
+    if ((start.lat === 0 && start.lng === 0) || (end.lat === 0 && end.lng === 0)) return;
+    googleMapApi.distance(start, end)
+      .then((data: number) => {
+        setDistance(data / 1000);
+      })
+      .catch((err) => {
+        setDisable(true);
+        setMessageError("Địa chỉ này không hỗ trợ giao hàng")
+        setFailure(true);
+      })
   }, [addressStart, addressEnd])
 
   useEffect(() => {
     orderApi.getPrice(distance, categoryId)
-      .then((result) => { setMoney(result?.total || 0) })
-      .catch((error) => { })
+      .then((result) => {
+        setMoney(result?.total || 0)
+      })
+      .catch((err) => {
+        setMessageError(err.message)
+        setFailure(true);
+      })
   }, [distance, categoryId])
-
-
 
   const defaultValue = () => {
     setDecription("");
@@ -94,6 +103,7 @@ const Order = (props: any) => {
 
   const handleSubmit = async () => {
     try {
+      setWaiting(true);
       const start: Address = {
         address_notes: addressStart.address_notes,
         latitude: addressStart.latitude,
@@ -118,13 +128,13 @@ const Order = (props: any) => {
       await orderApi.create(
         start, end, decription, distance, customerNote, imgOrder, paymentId, categoryId
       );
-
-      setAddSuccess(true);
+      setWaiting(false);
+      setSuccess(true);
       defaultValue();
     }
     catch (err: any) {
-      console.log(err.message);
-      setIsError(true);
+      setWaiting(false);
+      setFailure(true);
       setMessageError(err.message)
     }
   }
@@ -139,6 +149,14 @@ const Order = (props: any) => {
       })
     })
   }
+
+  const handleHideNotification = () => {
+    setWaiting(false);
+    setSuccess(false);
+    setFailure(false);
+    setMessageError("");
+  }
+
   return (
     <>
       <div className="col">
@@ -242,7 +260,7 @@ const Order = (props: any) => {
             </div>
           </div>
           <div className="text-end mb-3">
-            <span>Total:</span>
+            <span>Tổng:</span>
             <span className="fw-bold"> {money} VNĐ</span>
           </div>
           <div className="mb-4 text-end">
@@ -253,6 +271,38 @@ const Order = (props: any) => {
           </div>
         </div>
       </div>
+      {
+        success ?
+          <MessageBox
+            title={MESSAGES.SUCCESS}
+            icon="fa-solid fa-circle-check text-success"
+            message={"Bạn đã đặt đơn thành công!"}
+            handleAcceptError={handleHideNotification}
+          />
+          :
+          <></>
+      }
+      {
+        failure ?
+          <MessageBox
+            title={MESSAGES.FAILURE}
+            icon="fa-solid fa-circle-xmark text-danger"
+            message={messageError}
+            handleAcceptError={handleHideNotification}
+          />
+          :
+          <></>
+      }
+      {
+        waiting ?
+          <MessageBox
+            title={MESSAGES.NOTIFICATION}
+            icon="fa-solid fa-arrows-rotate text-danger"
+            message={"Đang Xử Lý! Vui lòng chờ"}
+          />
+          :
+          <></>
+      }
     </>
   )
 }

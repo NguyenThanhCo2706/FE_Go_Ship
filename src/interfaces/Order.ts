@@ -1,5 +1,6 @@
 import Address from "./address"
 import AddressView from "./addressView";
+import Category from "./category";
 import Payment from "./payment";
 import Rate from "./rate";
 import Status from "./status";
@@ -23,7 +24,7 @@ export interface ViewOrder {
   id?: number,
   address_start: AddressView,
   address_end: AddressView,
-  category: number,
+  category: Category,
   cost: number,
   customer: User,
   customer_notes: string,

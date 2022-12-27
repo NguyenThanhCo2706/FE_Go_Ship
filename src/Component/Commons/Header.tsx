@@ -30,12 +30,13 @@ const Header = (props: any) => {
             </div>
             <div className="col-4">
               <div className="input-group w-75">
-                <input type="text" className="form-control border-radius bg-light shadow" />
+                {/* <input type="text" className="form-control border-radius bg-light shadow" /> */}
               </div>
             </div>
             <div className="col-4">
               <div className="d-flex flex-row justify-content-between align-items-center">
                 <div className="d-flex flex-row justify-content-around align-items-center fw-bold fs-6 w-100">
+                  <div></div>
                   <div onClick={() => navigate("/home/order")} className="nav-header-item">Đặt đơn</div>
                   <div onClick={() => navigate("/home/map")} className="nav-header-item">Bản đồ</div>
                 </div>
@@ -51,7 +52,6 @@ const Header = (props: any) => {
                     <i className="fa-brands fa-rocketchat header-color fs-5"></i>
                   </div>
                   <div className="hover" onClick={() => navigate("/home/profile")} >
-
                     <img className="nav-avatar border shadow"
                       src={avatar || ""}
                       onError={({ currentTarget }) => {

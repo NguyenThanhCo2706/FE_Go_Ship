@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react';
-import ReactMapGL from "react-map-gl";
 import mapboxgl from 'mapbox-gl';
 import googleMapApi from '../../api/googleMapApi';
 import { MAPBOX_ACCESS_TOKEN, MESSAGES } from '../../constraint';
@@ -10,8 +9,7 @@ import {
 } from "../../config/firebase-config";
 import { generateImageMarker } from '../../utils/generalMarker';
 import MessageBox from '../Commons/MessageBox';
-
-
+import { caculateDistance } from '../../utils/caculateDistance';
 
 // eslint-disable-next-line import/no-webpack-loader-syntax
 (mapboxgl as any).workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
@@ -61,7 +59,15 @@ export default function Travel() {
         }
         const listAddress = data.val();
         for (const key in listAddress) {
-          console.log(listAddress[key].longitude)
+          const distance = caculateDistance(
+            position.coords.latitude,
+            position.coords.longitude,
+            listAddress[key].latitude,
+            listAddress[key].longitude
+          );
+          console.log(distance);
+
+          if (distance > 10) continue;
           new mapboxgl.Marker({
             element: generateImageMarker("marker.png"),
             draggable: true
@@ -85,17 +91,7 @@ export default function Travel() {
     });
   });
 
-  const aaa = (e: any) => {
-    // console.log(e)
-    // map.current = new mapboxgl.Map({
-    //   container: mapContainer.current,
-    //   style: 'mapbox://styles/mapbox/streets-v11',
-    //   center: [109, 15.82],
-    //   zoom: zoom
-    // });
-    // map.current.setCenter([108.25956, 15.82898]);
-    // map.current.setZoom(13);
-  }
+
   const searchMap = async () => {
     if (nameSearch === "") {
       setListLocation([])
@@ -132,7 +128,11 @@ export default function Travel() {
           <div className="div-search">
             <div className="">
               <div className="input-group">
-                <input className="form-control" type="search" onChange={(e) => handleSearch(e)} />
+                <input
+                  className="form-control"
+                  type="search"
+                  onKeyDown={(e) => e.key === "Enter" ? searchMap() : undefined}
+                  onChange={(e) => handleSearch(e)} />
                 <span className="input-group-append" onClick={() => searchMap()}>
                   <button className="btn btn-outline-secondary bg-white border-start-0 border-bottom-0 border " type="button">
                     <i className="fa fa-search"></i>
@@ -159,7 +159,7 @@ export default function Travel() {
           <div className="sidebar">
             Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
           </div>
-          <div ref={mapContainer} className="map-container" onClick={(e) => aaa(e)} />
+          <div ref={mapContainer} className="map-container" />
         </div>
       </div>
       {
@@ -168,7 +168,6 @@ export default function Travel() {
             title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
-            handleAcceptError={() => { }}
           />
           :
           <></>

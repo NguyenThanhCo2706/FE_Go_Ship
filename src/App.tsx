@@ -1,20 +1,20 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import Home from "./Component/New/Home";
-import Main from "./Component/New/Main";
-import "./newApp.css";
-import Profile from "./Component/New/Profile";
-import Order from "./Component/New/Order";
-import History from "./Component/New/History";
-import Map from "./Component/New/Travel";
-import Chat from "./Component/New/Chat";
-import ChildChat from "./Component/New/ChildChat";
-import Detail from "./Component/New/Detail";
-import Header from "./Component/New/Header";
+import Home from "./Component/Page/Home";
+import Main from "./Component/Page/Main";
+import Profile from "./Component/Page/Profile";
+import Order from "./Component/Page/Order";
+import History from "./Component/Page/History";
+import Map from "./Component/Page/Travel";
+import Chat from "./Component/Page/Chat";
+import ChildChat from "./Component/Page/ChildChat";
+import Detail from "./Component/Page/Detail";
+import Header from "./Component/Commons/Header";
 import { useEffect, useState } from "react";
 import Login from "./Component/Auth/Login";
 import Register from "./Component/Auth/Register";
 import jwt_decode from "jwt-decode";
 import Page404 from "./Component/Commons/Page404";
+import "./App.css";
 
 
 const NewApp = () => {
@@ -26,13 +26,8 @@ const NewApp = () => {
     try {
       const tokenDecode: any = jwt_decode(localStorage.getItem("token") || "");
       setPhone(tokenDecode.phone_number);
-
-      // userApi.getDetail().then(data => {
-      //   setAvatar(data.avatar_url) 
+      setAvatar(tokenDecode.avatar_url);
       setValidToken(true);
-      //   navigate("/home");
-
-      // });
     }
     catch (err) {
       console.log(err)
@@ -50,7 +45,6 @@ const NewApp = () => {
           element={<Login
             phone={phone}
             setPhone={setPhone}
-            vali
             setValidToken={setValidToken}
           />}
         />

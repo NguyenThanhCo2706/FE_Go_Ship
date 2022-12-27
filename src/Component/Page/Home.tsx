@@ -1,11 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import Header from "./Header";
-import History from "./History";
-import Order from "./Order";
+import { useNavigate } from "react-router-dom";
 import authApi from "../../api/authApi";
 import MessageBox from "../Commons/MessageBox";
 import { MESSAGES } from "../../constraint";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 const Home = (props: any) => {
@@ -19,6 +16,19 @@ const Home = (props: any) => {
     setWaiting(false);
     navigate("/");
   }
+  const [isActive, setActive] = useState(1);
+
+  useEffect(() => {
+    const node: any = document.getElementById(String(isActive));
+    node.classList.add("nav-color")
+  }, [isActive])
+
+  const handleClick = (link: string, number: number) => {
+    const node: any = document.getElementById(String(isActive));
+    node.classList.remove("nav-color")
+    navigate(link);
+    setActive(number)
+  }
   return (
     <>
       <div className="container bg-light shadow bg-white pt-3">
@@ -31,7 +41,8 @@ const Home = (props: any) => {
               </div>
               <div className="position-relative h-100 min-height">
                 <div
-                  onClick={() => navigate("/home/profile")}
+                  onClick={() => handleClick("/home/profile", 1)}
+                  id="1"
                   className="d-flex flex-row align-items-center border-radius p-2 content-nav">
                   <div className="background-icon me-3 shadow-sm">
                     <i className="fa-solid fa-user fs-3"></i>
@@ -42,8 +53,9 @@ const Home = (props: any) => {
                   </div>
                 </div>
                 <div
-                  onClick={() => navigate("/home/order")}
-                  className="d-flex flex-row align-items-center border-radius p-2 content-nav">
+                  onClick={() => handleClick("/home/order", 2)}
+                  id="2"
+                  className="d-flex flex-row align-items-center border-radius p-2 content-nav ">
                   <div className="background-icon me-3 shadow-sm">
                     <i className="fa-solid fa-cart-plus fs-3"></i>
                   </div>
@@ -53,7 +65,8 @@ const Home = (props: any) => {
                   </div>
                 </div>
                 <div
-                  onClick={() => navigate("/home/map")}
+                  onClick={() => handleClick("/home/map", 3)}
+                  id="3"
                   className="d-flex flex-row align-items-center border-radius p-2 content-nav">
                   <div className="background-icon me-3 shadow-sm">
                     <i className="fa-solid fa-map fs-3"></i>
@@ -64,10 +77,11 @@ const Home = (props: any) => {
                   </div>
                 </div>
                 <div
-                  onClick={() => navigate("/home/history")}
+                  onClick={() => handleClick("/home/history", 4)}
+                  id="4"
                   className="d-flex flex-row align-items-center border-radius p-2 content-nav">
                   <div className="background-icon me-3 shadow-sm">
-                    <i className="fa-solid fa-cart-shopping fs-3"></i>
+                    <i className="fa-solid fa-timeline fs-3"></i>
                   </div>
                   <div className="d-flex flex-column">
                     <span className="fw-bold">Lịch sử</span>
@@ -80,7 +94,7 @@ const Home = (props: any) => {
                     type="button"
                     className="btn btn-outline-secondary">
                     <i className="fa-solid fa-arrow-left me-2"></i>
-                    Logout
+                    Đăng xuất
                   </button>
                 </div>
               </div>
@@ -97,7 +111,6 @@ const Home = (props: any) => {
             title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
-            handleAcceptError={() => { }}
           />
           :
           <></>
