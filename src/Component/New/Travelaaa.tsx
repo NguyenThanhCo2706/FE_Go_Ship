@@ -1,21 +1,18 @@
-import React, { useRef, useEffect, useState } from 'react';
-import mapboxgl from 'mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { useNavigate } from 'react-router-dom';
+import { useRef, useEffect, useState } from 'react';
+import ReactMapGL from "react-map-gl";
+import mapboxgl from 'mapbox-gl';
 import googleMapApi from '../../api/googleMapApi';
 import { MAPBOX_ACCESS_TOKEN, MESSAGES } from '../../constraint';
 import {
   database,
   refDatabase,
-  refStorage,
-  push,
   onValue,
-  set,
-  storage,
-  uploadBytes,
-  getDownloadURL
 } from "../../config/firebase-config";
 import { generateImageMarker } from '../../utils/generalMarker';
 import MessageBox from '../Commons/MessageBox';
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+// mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
