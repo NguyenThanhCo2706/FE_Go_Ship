@@ -4,7 +4,6 @@ import categoryApi from "../../api/categoryApi";
 import googleMapApi from "../../api/googleMapApi";
 import orderApi from "../../api/orderApi";
 import paymentApi from "../../api/paymentApi";
-import constraint from "../../constraint";
 import Address from "../../interfaces/address";
 import Category from "../../interfaces/category";
 import Payment from "../../interfaces/payment";
@@ -17,6 +16,7 @@ import {
 } from "../../config/firebase-config";
 import { yupOrder } from "../../validation/validation";
 import { handleError } from "../../utils";
+import { MESSAGES } from "../../constraint";
 
 const Order = (props: any) => {
   const myPhone: string = props.phone;
@@ -70,25 +70,25 @@ const Order = (props: any) => {
       setMarkers(markers);
     }
     if (markers[0]) {
-      googleMapApi.getNameByLocation(markers[0]?._lngLat.lng, markers[0]?._lngLat.lat).then(data => {
-        setAddressStart(prev => ({
-          ...prev,
-          latitude: markers[0]._lngLat.lat,
-          longitude: markers[0]._lngLat.lng,
-          address_notes: data
-        }))
-      })
+      // googleMapApi.getNameByLocation(markers[0]?._lngLat.lng, markers[0]?._lngLat.lat).then(data => {
+      //   setAddressStart(prev => ({
+      //     ...prev,
+      //     latitude: markers[0]._lngLat.lat,
+      //     longitude: markers[0]._lngLat.lng,
+      //     address_notes: data
+      //   }))
+      // })
     }
 
     if (markers[1]) {
-      googleMapApi.getNameByLocation(markers[1]?._lngLat.lng, markers[1]?._lngLat.lat).then(data => {
-        setAddressEnd(prev => ({
-          ...prev,
-          latitude: markers[1]?._lngLat.lat,
-          longitude: markers[1]?._lngLat.lng,
-          address_notes: data
-        }))
-      })
+      // googleMapApi.getNameByLocation(markers[1]?._lngLat.lng, markers[1]?._lngLat.lat).then(data => {
+      //   setAddressEnd(prev => ({
+      //     ...prev,
+      //     latitude: markers[1]?._lngLat.lat,
+      //     longitude: markers[1]?._lngLat.lng,
+      //     address_notes: data
+      //   }))
+      // })
     }
 
     if (markers.length === 2) {
@@ -168,12 +168,7 @@ const Order = (props: any) => {
     catch (err: any) {
       console.log(err.message);
       setIsError(true);
-      if (err.response && err.response.status) {
-        setMessageError(handleError(err));
-      }
-      else {
-        setMessageError(err.message)
-      }
+      setMessageError(err.message)
     }
   }
 
@@ -288,7 +283,7 @@ const Order = (props: any) => {
       {
         addSuccess ?
           <MessageBox
-            title={constraint.SUCCESS}
+            title={MESSAGES.SUCCESS}
             icon="fa-solid fa-circle-check text-success"
             message="Bạn đã Đặt hàng thành công!"
             handleAcceptError={() => setAddSuccess(false)} />
@@ -298,7 +293,7 @@ const Order = (props: any) => {
       {
         isError ?
           <MessageBox
-            title={constraint.NOTIFICATION}
+            title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-circle-xmark text-danger"
             message={messageError}
             handleAcceptError={() => setIsError(false)}

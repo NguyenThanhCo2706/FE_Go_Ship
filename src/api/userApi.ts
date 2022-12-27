@@ -6,7 +6,7 @@ import User from "../interfaces/user";
 const userApi = {
   async getDetail() {
     const url = `customer/detail/`;
-    const result: ResponseData<User> = await axiosClient.get(url, {
+    const result = await axiosClient.get(url, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem("token")}`
       }
@@ -27,11 +27,8 @@ const userApi = {
 
   async getDetailByPhone(phone: string) {
     try {
-      const url = `user/get-info/`
-      const data = JSON.stringify({
-        phone_number: phone
-      });
-      const result: ResponseData<User> = await axiosClient.post(url, data, {
+      const url = `user/get-info/?phone_number=${phone}`;
+      const result: ResponseData<User> = await axiosClient.get(url, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`
         }

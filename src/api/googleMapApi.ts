@@ -34,7 +34,14 @@ const googleMapApi = {
         "point.lat": lat
       }
     });
-    return result.data.features[0].properties.label;
+    console.log(result);
+    return {
+      address_notes: result.data.features[0].properties.label,
+      region: result.data.features[0].properties.region,
+      country: result.data.features[0].properties.country,
+      latitude: lat,
+      longitude: lng
+    };
   }
 }
 
