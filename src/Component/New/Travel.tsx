@@ -11,8 +11,10 @@ import {
 import { generateImageMarker } from '../../utils/generalMarker';
 import MessageBox from '../Commons/MessageBox';
 
+
+
 // eslint-disable-next-line import/no-webpack-loader-syntax
-// mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
+(mapboxgl as any).workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
