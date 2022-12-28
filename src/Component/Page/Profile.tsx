@@ -93,12 +93,12 @@ const Profile = (props: any) => {
                 <div className="ms-4 me-4">
                   <button
                     className=" btn btn-outline-primary"
-                    onClick={() => openChooseFile()}>Change</button>
+                    onClick={() => openChooseFile()}>Thay đổi</button>
                 </div>
                 <div>
                   <button
                     className=" btn btn-outline-danger"
-                    onClick={() => handleRemoveAvatar()}>Remove</button>
+                    onClick={() => handleRemoveAvatar()}>Xóa</button>
                 </div>
                 <input type="file" style={{ display: "none" }} id="upload-avatar" onChange={(e) => handleUpload(e)} />
                 <input type="file" style={{ display: "none" }} id="upload-avatar" onChange={(e) => handleUpload(e)} />
@@ -130,14 +130,6 @@ const Profile = (props: any) => {
             <div className="row pb-4 mb-4 border-bottom">
               <div className="col-6">
                 <div className="">
-                  <label className="form-label fw-bold">Địa chỉ:</label>
-                  <input
-                    type="text"
-                    className="form-control" />
-                </div>
-              </div>
-              <div className="col-6">
-                <div className="">
                   <label className="form-label fw-bold">Giới tính:</label>
                   <select
                     className="form-select"
@@ -149,11 +141,14 @@ const Profile = (props: any) => {
                   </select>
                 </div>
               </div>
+              <div className="col-6">
+
+              </div>
             </div>
           </div>
           <div className="d-flex flex-row justify-content-between mb-4">
             <div>
-              <button className="btn btn-outline-dark">Log out</button>
+
             </div>
             <div>
               <button
@@ -172,7 +167,6 @@ const Profile = (props: any) => {
             title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
-            handleAcceptError={() => { }}
           />
           :
           <></>

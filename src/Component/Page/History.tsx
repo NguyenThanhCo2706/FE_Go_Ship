@@ -140,7 +140,6 @@ const History = () => {
             title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
-            handleAcceptError={() => { }}
           />
           :
           <></>

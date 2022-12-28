@@ -16,9 +16,9 @@ export const URL_IMAGES = {
 export const MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoidGhhbmhjbyIsImEiOiJjbDgzdjFyeHYwOW1hM25tcHBlZTlveTAwIn0.hIwtYHcABmKWnG9goNPd5A";
 
 export const GENDER = [
-  { id: 0, value: "Nam" },
-  { id: 1, value: "Nữ" },
-  { id: 2, value: "Buê Đuê" }
+  { id: 0, value: "None" },
+  { id: 1, value: "Nam" },
+  { id: 2, value: "Nữ" }
 ]
 
 export const STATUS = [

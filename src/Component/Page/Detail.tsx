@@ -1,5 +1,4 @@
 import { Params, useNavigate, useParams } from "react-router-dom";
-import Header from "./Header";
 import { useEffect, useRef, useState, Fragment } from "react";
 import mapboxgl from "mapbox-gl";
 import googleMapApi from "../../api/googleMapApi";
@@ -11,13 +10,15 @@ import Status from "../../interfaces/status";
 import moment from "moment";
 import { MESSAGES, STATUS, URL_IMAGES } from "../../constraint";
 import classNames from "classnames";
-import { average, generateImageMarker } from "../../utils/generalMarker";
+import { generateImageMarker } from "../../utils/generalMarker";
 import MessageBox from "../Commons/MessageBox";
 
 
 const Detail = () => {
   const params: Readonly<Params<string>> = useParams();
+
   const [order, setOrder] = useState<ViewOrder>();
+  console.log(order);
   const [rating, setRating] = useState(0);
   const [feedBack, setFeedback] = useState("");
   const [waiting, setWaiting] = useState(false);
@@ -91,7 +92,7 @@ const Detail = () => {
       <div className="container bg-light shadow bg-white pt-1">
         <div className="fs-5 m-2 fw-bold" onClick={() => navigate("/home/history")}>
           <i className="fa-solid fa-arrow-left me-2 header-color"></i>
-          <span className="">Quay lại</span>
+          <span className="hover">Quay lại</span>
         </div>
         <div className="row p-1">
           <div className="col-7">
@@ -120,6 +121,9 @@ const Detail = () => {
               <div className="d-flex flex-row justify-content-between">
                 {
                   STATUS.map((item: any, index: number) => {
+                    if (order?.status.id === 5 && index + 1 === 4) {
+                      return (<></>);
+                    }
                     const active = index < Number(order?.status.id) || 0;
                     return (
                       <Fragment key={index}>
@@ -233,11 +237,11 @@ const Detail = () => {
               <div className="d-flex flex-column border border-3 border-primary p-3 mb-3 bg-feat">
                 <div className="d-flex flex-row justify-content-between mb-2">
                   <span>Số điện thoại:</span>
-                  <span className="fw-bold">0941383449</span>
+                  <span className="fw-bold">{(order?.customer as any)?.account?.phone_number}</span>
                 </div>
                 <div className="d-flex flex-row justify-content-between mb-2">
-                  <span>Ngày giao hàng:</span>
-                  <span className="fw-bold">12/25/2022</span>
+                  <span>Hình thức giao hàng:</span>
+                  <span className="fw-bold">{order?.category.name}</span>
                 </div>
                 <div className="d-flex flex-row justify-content-between">
                   <span>Thanh toán:</span>
@@ -247,7 +251,7 @@ const Detail = () => {
               </div>
               <div className="d-flex flex-row justify-content-between fw-bold fs-5">
                 <span>Tổng tiền:</span>
-                <span>30.000 VNĐ</span>
+                <span>{order?.cost.toLocaleString('it-IT', { style: 'currency', currency: "VND" })}</span>
               </div>
             </div>
           </div>
@@ -260,7 +264,6 @@ const Detail = () => {
             title={MESSAGES.NOTIFICATION}
             icon="fa-solid fa-arrows-rotate text-danger"
             message={"Đang Xử Lý! Vui lòng chờ"}
-            handleAcceptError={() => { }}
           />
           :
           <></>

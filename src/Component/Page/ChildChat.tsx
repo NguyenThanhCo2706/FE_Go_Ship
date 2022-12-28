@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   database,
   refDatabase,
@@ -15,10 +15,10 @@ import dayjs from "dayjs";
 import userApi from "../../api/userApi";
 import User from "../../interfaces/user";
 import { URL_IMAGES } from "../../constraint";
-import { caculateAge } from "../../utils";
+import { caculateAge, changeFormateDate } from "../../utils";
 
 import { useParams } from "react-router-dom";
-import { limitToLast, query } from "firebase/database";
+import { query, limitToLast } from "firebase/database";
 
 const ChildChat = (props: any) => {
   const { myPhone } = props;
@@ -29,24 +29,32 @@ const ChildChat = (props: any) => {
   const [message, setMessage] = useState<string>("");
   const [listMessages, setListMessages] = useState<Array<any>>([]);
   const [typeUpload, setTypeUpload] = useState("");
+  const [viewList, setViewList] = useState<Array<any>>();
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     setVisibleDetail(false);
     setMessage("");
+    setPage(1);
   }, [params])
 
   const sendMessage = () => {
     push(refDatabase(database, `messages/${myPhone}/${yourPhone}`), {
-      dateTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      dateTime: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
       image: "",
       messages: message,
       senderPhone: myPhone
     });
     push(refDatabase(database, `messages/${yourPhone}/${myPhone}`), {
-      dateTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      dateTime: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
       image: "",
       messages: message,
       senderPhone: myPhone
+    })
+    set(refDatabase(database, `users/${myPhone}`), {
+      avatar: "https://ggsc.s3.amazonaws.com/images/uploads/The_Science-Backed_Benefits_of_Being_a_Dog_Owner.jpg",
+      name: "cow",
+      phone: myPhone
     })
     set(refDatabase(database, `messages/${yourPhone}/${myPhone}/isNew`), true);
     setMessage("");
@@ -92,6 +100,10 @@ const ChildChat = (props: any) => {
     })
   }
 
+  useEffect(() => {
+    setViewList(listMessages.slice(Math.max(listMessages.length - 20 * page, 0)))
+  }, [listMessages, page])
+
   const viewDetailUser = async () => {
     if (visibleDetail) {
       setOtherUser({} as User);
@@ -109,8 +121,6 @@ const ChildChat = (props: any) => {
 
   useEffect(() => {
     onValue(refDatabase(database, `messages/${myPhone}/${yourPhone}`), data => {
-      console.log(data);
-
       const getMessage: Array<string> = [];
       data.forEach(message => {
         getMessage.push(message.val())
@@ -124,8 +134,7 @@ const ChildChat = (props: any) => {
     if (element) {
       element.scrollTop = element?.scrollHeight;
     }
-  }, [listMessages]);
-
+  }, [viewList]);
   return (
     <>
       <div className="col d-flex border-start">
@@ -158,7 +167,7 @@ const ChildChat = (props: any) => {
                         <div className="fs-5 fw-bold">{ortherUser?.name}</div>
                         <div className="d-flex flex-row justify-content-around w-100">
                           <div><i className="fa-solid fa-cake-candles"></i> {caculateAge(ortherUser?.birth_date as string)}</div>
-                          <div><i className="fa-solid fa-user"></i> {ortherUser?.gender === 0 ? "Nữ" : "Nam"}</div>
+                          <div><i className="fa-solid fa-user"></i>{ortherUser?.gender === 1 ? "Nam" : undefined} {ortherUser?.gender === 2 ? "Nữ" : undefined}</div>
                         </div>
                       </div>
                       :
@@ -169,15 +178,27 @@ const ChildChat = (props: any) => {
                     <></>
                 }
               </div>
+
               <div className="chat-content p-2" id="scroll-chat">
-                {listMessages?.map((item, index, array) => {
-                  const date1 = dayjs(item.dateTime);
-                  const diffTime = date1.diff(array[index - 1]?.dateTime, 'minute', true);
+                {
+                  listMessages.length > 20 * page ?
+                    <div
+                      onClick={() => setPage(page + 1)}
+                      className="d-flex flex-row justify-content-center fs-6 text-primary hover">Load more</div>
+                    : undefined
+                }
+                {listMessages ? viewList?.map((item, index, array) => {
+                  if (typeof item == "boolean") return <Fragment key={index}></Fragment>;
+                  const date1 = dayjs(changeFormateDate(item.dateTime));
+                  let diffTime = -1;
+                  if (index > 0) {
+                    diffTime = date1.diff(changeFormateDate(array[index - 1]?.dateTime), 'minute', true);
+                  }
                   return (
                     <div key={index}>
                       {
                         diffTime > 10 || diffTime < 0 ?
-                          <div className="d-flex flex-row justify-content-center fs-6">{new Date(item.dateTime).toLocaleString()}</div>
+                          <div className="d-flex flex-row justify-content-center fs-6">{item.dateTime}</div>
                           :
                           <></>
                       }
@@ -208,10 +229,10 @@ const ChildChat = (props: any) => {
                           <div className="d-flex flex-row justify-content-start">
                             {
                               item.image ?
-                                item.image.substring(item.image.length - 3) === "jpg" ?
+                                item.image.includes("jpg") ?
                                   <img src={item.image} alt="" className="img-chat-content m-1" />
                                   :
-                                  <video>
+                                  <video className="img-chat-content m-1">
                                     <source src={item.image} />
                                   </video>
                                 :
@@ -228,7 +249,7 @@ const ChildChat = (props: any) => {
                     </div>
                   )
                 }
-                )}
+                ) : undefined}
               </div>
               <div className="chat-input border-top">
                 <div className="d-flex flex-row p-2">

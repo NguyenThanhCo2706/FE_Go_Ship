@@ -1,5 +1,3 @@
-import "./style.css"
-
 const Footer = () => {
   return (
     <div className="bg-dark text-white p-5">

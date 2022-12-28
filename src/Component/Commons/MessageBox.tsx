@@ -10,10 +10,15 @@ const MessageBox = (props: any) => {
           <h1><i className={props.icon}></i></h1>
           <span className="fw-lighter m-2">{props.message}</span>
           <span>{props.aaa}</span>
-          <button
-            onClick={props.handleAcceptError}
-            className="btn btn-primary"
-          >Xác nhận</button>
+          {
+            props.handleAcceptError ?
+              <button
+                onClick={props.handleAcceptError}
+                className="btn btn-primary"
+              >Xác nhận</button>
+              : <></>
+          }
+
         </div>
       </div>
     </>

@@ -28,6 +28,6 @@ export const yupOrder = yup.object().shape({
   cost: yup.number(),
   customer_notes: yup.string(),
   description: yup.string(),
-  distance: yup.number(),
+  distance: yup.number().moreThan(0, "Khoảng cách giao hàng phải lớn hơn 0"),
   img_order: yup.string()
 })

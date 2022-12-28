@@ -1,5 +1,4 @@
-import Header from "./Header";
-
+import Footer from "../Commons/Footer";
 
 const Main = () => {
   return (
@@ -120,6 +119,7 @@ const Main = () => {
           </div>
         </div>
       </div>
+        <Footer />
     </>
   )
 }

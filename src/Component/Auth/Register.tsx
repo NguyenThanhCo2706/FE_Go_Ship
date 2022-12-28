@@ -8,7 +8,6 @@ import { yupAuth } from '../../validation/validation';
 import MessageBox from '../Commons/MessageBox';
 import { MESSAGES } from '../../constraint';
 import { authentication } from "../../config/firebase-config";
-import { handleError } from '../../utils';
 
 
 const Register = () => {
@@ -24,7 +23,6 @@ const Register = () => {
   const [rePassword, setRePassword] = useState("");
   const [otp, setOTP] = useState("");
   const [final, setfinal] = useState<any>();
-  const [verify, setVerify] = useState<any>();
 
   const handleRegister = async () => {
     if (password !== rePassword) {
@@ -95,7 +93,7 @@ const Register = () => {
   }
 
   const navigateLogin = () => {
-    navigate('/login');
+    navigate('/');
   }
 
   const handleHideNotification = () => {
@@ -105,7 +103,7 @@ const Register = () => {
 
   const handleRegisterSuccess = () => {
     setRegisterSuccess(false);
-    navigate('/login');
+    navigate('/');
   }
 
   return (
