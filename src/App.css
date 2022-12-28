@@ -383,3 +383,8 @@
   object-fit: cover;
   border-radius: 100%;
 }
+
+.hover-chat-item:hover {
+  background-color: #f7f8ff;
+  cursor: pointer;
+}

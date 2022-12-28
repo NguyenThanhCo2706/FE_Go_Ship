@@ -48,7 +48,7 @@ const Chat = (props: any) => {
               {users?.map((item, index) => (
                 <div
                   key={index}
-                  className="p-2 li-nav d-flex flex-row align-items-center justify-content-between"
+                  className="p-2 li-nav d-flex flex-row align-items-center justify-content-between hover-chat-item"
                   onClick={() => navigate("/home/chat/" + item)}
                 >
                   <div>

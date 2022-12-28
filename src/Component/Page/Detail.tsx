@@ -18,7 +18,6 @@ const Detail = () => {
   const params: Readonly<Params<string>> = useParams();
 
   const [order, setOrder] = useState<ViewOrder>();
-  console.log(order);
   const [rating, setRating] = useState(0);
   const [feedBack, setFeedback] = useState("");
   const [waiting, setWaiting] = useState(false);

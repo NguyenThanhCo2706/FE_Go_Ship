@@ -54,7 +54,6 @@ const orderApi = {
   },
   async getOrderByStatus(page: any, statusId: any) {
     const url = `/order/status/?page=${page}${statusId ? "&status_id=" + statusId : ""}`;
-    console.log(url);
 
     const result: ResponseData<any> = await axiosClient.get(url, {
       headers: {

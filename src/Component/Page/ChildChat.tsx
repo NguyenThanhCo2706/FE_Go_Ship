@@ -16,14 +16,12 @@ import userApi from "../../api/userApi";
 import User from "../../interfaces/user";
 import { URL_IMAGES } from "../../constraint";
 import { caculateAge, changeFormateDate } from "../../utils";
-
+import jwt_decode from "jwt-decode";
 import { useParams } from "react-router-dom";
-import { query, limitToLast } from "firebase/database";
 
 const ChildChat = (props: any) => {
   const { myPhone } = props;
   const params: any = useParams();
-  const yourPhone = params.yourPhone;
   const [ortherUser, setOtherUser] = useState<User>();
   const [visibleDetail, setVisibleDetail] = useState(false);
   const [message, setMessage] = useState<string>("");
@@ -36,27 +34,28 @@ const ChildChat = (props: any) => {
     setVisibleDetail(false);
     setMessage("");
     setPage(1);
-  }, [params])
+  }, [params.yourPhone])
+  console.log(jwt_decode(localStorage.getItem("token") || ""));
 
   const sendMessage = () => {
-    push(refDatabase(database, `messages/${myPhone}/${yourPhone}`), {
+    push(refDatabase(database, `messages/${myPhone}/${params.yourPhone}`), {
       dateTime: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
       image: "",
       messages: message,
       senderPhone: myPhone
     });
-    push(refDatabase(database, `messages/${yourPhone}/${myPhone}`), {
+    push(refDatabase(database, `messages/${params.yourPhone}/${myPhone}`), {
       dateTime: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
       image: "",
       messages: message,
       senderPhone: myPhone
-    })
+    });
     set(refDatabase(database, `users/${myPhone}`), {
-      avatar: "https://ggsc.s3.amazonaws.com/images/uploads/The_Science-Backed_Benefits_of_Being_a_Dog_Owner.jpg",
-      name: "cow",
+      avatar: (jwt_decode(localStorage.getItem("token") || "") as any).avatar_url,
+      name: myPhone,
       phone: myPhone
-    })
-    set(refDatabase(database, `messages/${yourPhone}/${myPhone}/isNew`), true);
+    });
+    set(refDatabase(database, `messages/${params.yourPhone}/${myPhone}/isNew`), true);
     setMessage("");
   }
 
@@ -83,24 +82,26 @@ const ChildChat = (props: any) => {
     }
     uploadBytes(ref, e.target.files![0]).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(url => {
-        push(refDatabase(database, `messages/${myPhone}/${yourPhone}`), {
+        push(refDatabase(database, `messages/${myPhone}/${params.yourPhone}`), {
           dateTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           image: url,
           messages: "",
           senderPhone: myPhone
         });
-        push(refDatabase(database, `messages/${yourPhone}/${myPhone}`), {
+        push(refDatabase(database, `messages/${params.yourPhone}/${myPhone}`), {
           dateTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
           image: url,
           messages: "",
           senderPhone: myPhone
         })
-        set(refDatabase(database, `messages/${yourPhone}/${myPhone}/isNew`), true);
+        set(refDatabase(database, `messages/${params.yourPhone}/${myPhone}/isNew`), true);
       })
     })
   }
 
   useEffect(() => {
+    console.log("a");
+
     setViewList(listMessages.slice(Math.max(listMessages.length - 20 * page, 0)))
   }, [listMessages, page])
 
@@ -112,7 +113,7 @@ const ChildChat = (props: any) => {
     }
     setVisibleDetail(!visibleDetail);
     try {
-      const user = await userApi.getDetailByPhone(yourPhone);
+      const user = await userApi.getDetailByPhone(params.yourPhone);
       setOtherUser(user);
     }
     catch (err) {
@@ -120,14 +121,17 @@ const ChildChat = (props: any) => {
   }
 
   useEffect(() => {
-    onValue(refDatabase(database, `messages/${myPhone}/${yourPhone}`), data => {
+
+    onValue(refDatabase(database, `messages/${myPhone}/${params.yourPhone}`), data => {
+      console.log(data);
+
       const getMessage: Array<string> = [];
       data.forEach(message => {
         getMessage.push(message.val())
       })
       setListMessages(getMessage)
     });
-  }, [myPhone, yourPhone]);
+  }, [myPhone, params.yourPhone]);
 
   useEffect(() => {
     const element: any = document.getElementById("scroll-chat");
@@ -135,16 +139,17 @@ const ChildChat = (props: any) => {
       element.scrollTop = element?.scrollHeight;
     }
   }, [viewList]);
+
   return (
     <>
       <div className="col d-flex border-start">
-        {yourPhone ?
+        {params.yourPhone ?
           <>
             <div className="d-flex w-100 flex-column justify-content-between max-height">
               <div className="d-flex flex-row bg-light justify-content-between chat-height-top shadow-sm chat-header">
                 <div className="m-1">
                   <img src={process.env.PUBLIC_URL + "/images/go_ship.png"} alt="" className="item-avatar-chat border me-3" />
-                  <span className="fw-bold">{yourPhone}</span>
+                  <span className="fw-bold">{params.yourPhone}</span>
                 </div>
                 <div className="d-flex align-items-center">
                   <div className="btn-img-upload bg-white" onClick={() => viewDetailUser()}>
@@ -225,7 +230,7 @@ const ChildChat = (props: any) => {
                         : <></>
                       }
                       {
-                        item.senderPhone === yourPhone ?
+                        item.senderPhone === params.yourPhone ?
                           <div className="d-flex flex-row justify-content-start">
                             {
                               item.image ?

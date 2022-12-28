@@ -78,7 +78,6 @@ export default function Travel() {
     }, (error) => {
       console.log(error)
     });
-    console.log("Cow1")
   }, [])
 
   useEffect(() => {
@@ -98,14 +97,12 @@ export default function Travel() {
       return;
     }
     const data: any = await googleMapApi.searchname(nameSearch);
-    console.log(data.features);
     setListLocation(data.features)
     data.features.map((item: any) => {
       // console.log(item)
     })
   }
   const handleClickSearchItem = (location: Array<any>) => {
-    console.log(location);
     map.current.setCenter(location);
     map.current.setZoom(zoom);
     if (searchMarker) {
